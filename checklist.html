@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Checklist</title>
+    <link rel="stylesheet" href="checklist.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Botão para abrir/fechar o menu lateral -->
+        <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
+
+        <!-- Menu Lateral -->
+        <aside id="side-menu" class="side-menu">
+            <div class="menu-header">
+                <h3>Navegação</h3>
+                <button id="close-menu-btn" class="close-menu-btn">X</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="checklist.html" class="menu-link active">Checklist</a></li>
+                    <li><a href="agenda.html" class="menu-link">Agenda</a></li>
+                    <li><a href="relatorio.html" class="menu-link">Reunião</a></li>
+                    <li><a href="reporte.html" class="menu-link">Reporte</a></li>
+                    <!-- Adicione outros links aqui se precisar -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Overlay para telas pequenas -->
+        <div class="overlay"></div>
+
+        <!-- Conteúdo Principal do Checklist -->
+        <div class="main-content">
+            <header>
+                <h1>Minhas Tarefas do Checklist</h1>
+            </header>
+
+        <!-- Seção de Backup/Restauração -->
+        <section class="backup-section">
+            <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
+                📥 Exportar Dados (Backup)
+            </button>
+            <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
+                📤 Importar Dados (Restaurar)
+            </button>
+        </section>
+
+
+            <main>
+                <section class="add-task-section">
+                    <h2>Adicionar Nova Tarefa</h2>
+                    <form id="task-form">
+                        <input type="hidden" id="task-id"> <!-- Campo oculto para edição -->
+                        <div class="form-group">
+                            <label for="task-text">Tarefa:</label>
+                            <input type="text" id="task-text" placeholder="Ex: Comprar pão" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="submit-btn">Adicionar Tarefa</button>
+                            <button type="button" id="cancel-edit-btn" class="hidden">Cancelar Edição</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="checklist-section">
+                    <h2>Lista de Tarefas</h2>
+                    <div class="filters-and-actions">
+                        <div class="filters">
+                            <button id="filter-all" class="filter-btn active">Todas</button>
+                            <button id="filter-pending" class="filter-btn">Pendentes</button>
+                            <button id="filter-completed" class="filter-btn">Concluídas</button>
+                        </div>
+                        <button id="clear-completed-btn" class="clear-btn">Limpar Concluídas</button>
+                    </div>
+                    <ul id="task-list">
+                        <!-- As tarefas serão inseridas aqui pelo JavaScript -->
+                    </ul>
+                    <p id="empty-list-message" class="hidden">Nenhuma tarefa adicionada ainda. Que tal adicionar uma?</p>
+                </section>
+            </main>
+
+            <footer>
+                <p>&copy; 2026 Meu Checklist. Desenvolvido por JOSE.</p>
+            </footer>
+        </div>
+    </div>
+    <script src="backup.js"></script>
+    <script src="checklist.js"></script>
+</body>
+</html>

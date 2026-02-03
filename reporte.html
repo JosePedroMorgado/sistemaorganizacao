@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report de Atividades</title>
+    <!-- Carrega o CSS geral (menu, header, footer, etc.) -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Carrega o CSS específico para a página de Report -->
+    <link rel="stylesheet" href="reporte.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Botão para abrir/fechar o menu lateral -->
+        <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
+
+        <!-- Menu Lateral -->
+        <aside id="side-menu" class="side-menu">
+            <div class="menu-header">
+                <h3>Navegação</h3>
+                <button id="close-menu-btn" class="close-menu-btn">X</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="checklist.html" class="menu-link ">Checklist</a></li>
+                    <li><a href="agenda.html" class="menu-link">Agenda</a></li>
+                    <li><a href="relatorio.html" class="menu-link">Reunião</a></li>
+                    <li><a href="reporte.html" class="menu-link active">Reporte</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Overlay para telas pequenas -->
+        <div class="overlay"></div>
+
+        <!-- Conteúdo Principal da Página de Report -->
+        <div class="main-content">
+            <header>
+                <h1>Report de Atividades</h1>
+            </header>
+
+        <!-- Seção de Backup/Restauração -->
+        <section class="backup-section">
+            <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
+                📥 Exportar Dados (Backup)
+            </button>
+            <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
+                📤 Importar Dados (Restaurar)
+            </button>
+        </section>
+
+            <main>
+                <section class="toggle-buttons-section">
+                    <button id="toggle-filter-btn" class="toggle-btn">Filtrar Reports</button>
+                    <button id="toggle-add-btn" class="toggle-btn">Registrar Novo Report</button>
+                </section>
+
+                <!-- Seção de Filtros - INICIALMENTE OCULTA -->
+                <section id="filter-section" class="filter-section hidden-section">
+                    <h2>Filtrar Reports</h2>
+                    <div class="filter-group">
+                        <div class="form-group">
+                            <label for="filter-start-date">Data Inicial:</label>
+                            <input type="date" id="filter-start-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-end-date">Data Final:</label>
+                            <input type="date" id="filter-end-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-title">Título:</label>
+                            <input type="text" id="filter-title" placeholder="Filtrar por título...">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-area">Área:</label>
+                            <select id="filter-area">
+                                <option value="">Todas as Áreas</option>
+                                <!-- Opções de área serão preenchidas via JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-status">Status:</label>
+                            <select id="filter-status">
+                                <option value="">Todos os Status</option>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Concluído">Concluído</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button id="apply-filters-btn" class="submit-btn">Aplicar Filtros</button>
+                            <button id="clear-filters-btn" class="cancel-btn">Limpar Filtros</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção de Formulário de Registro - INICIALMENTE OCULTA -->
+                <section id="form-section" class="form-section hidden-section">
+                    <h2>Registrar Novo Report</h2>
+                    <form id="report-form">
+                        <input type="hidden" id="report-id">
+                        <div class="form-group">
+                            <label for="report-date">Data:</label>
+                            <input type="date" id="report-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-area">Área:</label>
+                            <select id="report-area" required>
+                                <option value="">Selecione uma área</option>
+                                <!-- Opções de área serão preenchidas via JS -->
+                            </select>
+                            <button type="button" id="add-new-area-btn" class="add-area-btn">Adicionar Nova Área</button>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="report-title">Título da Atividade:</label>
+                            <input type="text" id="report-title" placeholder="Título da atividade" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-status">Status:</label>
+                            <select id="report-status" required>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Concluído">Concluído</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="report-description">Descrição da Atividade:</label>
+                            <textarea id="report-description" placeholder="Descreva a atividade realizada..." required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="submit-btn" class="submit-btn">Salvar Report</button>
+                            <button type="button" id="cancel-edit-btn" class="cancel-btn hidden">Cancelar Edição</button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Seção de Lista de Reports -->
+                <section class="list-section">
+                    <h2>Reports Registrados</h2>
+                    <div class="table-controls">
+                        <label for="records-per-page">Registros por página:</label>
+                        <select id="records-per-page">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table id="reports-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Área</th>
+                                    <th>Título</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dados dos reports serão inseridos aqui pelo JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-controls">
+                        <button id="prev-page-btn" class="pagination-btn">Anterior</button>
+                        <span id="page-info">Página 1 de 1</span>
+                        <button id="next-page-btn" class="pagination-btn">Próxima</button>
+                    </div>
+                </section>
+            </main>
+
+            <footer>
+                <p>&copy; 2026 Report de Atividades. Todos os direitos reservados.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modal de Visualização de Report -->
+    <div id="view-report-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-modal-btn">&times;</span>
+            <h2>Detalhes do Report</h2>
+            <form id="view-report-form">
+                <div class="form-group">
+                    <label for="view-report-date">Data:</label>
+                    <input type="date" id="view-report-date" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="view-report-area">Área:</label>
+                    <input type="text" id="view-report-area" disabled>
+                </div>
+                <div class="form-group full-width">
+                    <label for="view-report-title">Título da Atividade:</label>
+                    <input type="text" id="view-report-title" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="view-report-status">Status:</label>
+                    <input type="text" id="view-report-status" disabled>
+                </div>
+                <div class="form-group full-width">
+                    <label for="view-report-description">Descrição da Atividade:</label>
+                    <textarea id="view-report-description" disabled></textarea>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button id="modal-edit-btn" class="modal-btn edit-btn">Editar</button>
+                <button id="modal-delete-btn" class="modal-btn delete-btn">Excluir</button>
+                <button id="modal-close-btn" class="modal-btn close-footer-btn">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="reporte.js"></script>
+    <script src="backup.js"></script>
+</body>
+</html>

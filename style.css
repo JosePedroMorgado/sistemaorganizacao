@@ -1,0 +1,789 @@
+/* Estilos Gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+    overflow-x: hidden; /* Evita scroll horizontal indesejado */
+}
+
+/* Container principal da aplicação para layout flexível */
+.app-container {
+    display: flex;
+    min-height: 100vh; /* Garante que o container ocupe toda a altura da viewport */
+    flex-direction: column; /* Organiza os itens (menu, main-content) em coluna */
+}
+
+/* Menu Lateral */
+.side-menu {
+    width: 250px; /* Largura padrão do menu */
+    background-color: #093962; /* Cor principal do seu tema */
+    color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    position: fixed; /* Fixa o menu na lateral */
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform: translateX(-100%); /* Esconde o menu por padrão */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000; /* Garante que o menu fique acima de outros elementos */
+    display: flex;
+    flex-direction: column;
+}
+
+.side-menu.open {
+    transform: translateX(0); /* Mostra o menu */
+}
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.menu-header h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.4rem;
+}
+
+.close-menu-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+}
+
+.close-menu-btn:hover {
+    color: #ffcc00; /* Cor de destaque no hover */
+}
+
+.side-menu nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; /* Faz a lista de links ocupar o espaço restante */
+}
+
+.side-menu nav ul li {
+    margin-bottom: 15px;
+}
+
+.side-menu nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.side-menu nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffcc00; /* Cor de destaque no hover */
+}
+
+.side-menu nav ul li a.active {
+    background-color: #007bff; /* Cor de destaque para o link ativo */
+    font-weight: bold;
+}
+
+/* Botão para abrir o menu */
+.menu-toggle-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px; /* Posição inicial */
+    background-color: #093962; /* Cor principal */
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 1001; /* Acima do menu */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease-in-out, background-color 0.3s ease; /* Adiciona transição para 'left' */
+}
+
+.menu-toggle-btn:hover {
+    background-color: #062a4b;
+}
+
+/* Nova regra: quando o menu está aberto, move o botão de alternância */
+.menu-toggle-btn.menu-open {
+    left: 270px; /* Largura do menu (250px) + padding/margem (20px) */
+}
+
+/* Conteúdo principal da aplicação */
+.main-content {
+    flex-grow: 1; /* Ocupa o espaço restante */
+    padding-left: 0; /* Sem padding inicial, ajustado pelo JS */
+    transition: margin-left 0.3s ease-in-out;
+    width: 100%; /* Garante que ocupe a largura total quando o menu está fechado */
+    display: flex; /* Adicionado para flexbox */
+    flex-direction: column; /* Organiza header, main e footer em coluna */
+}
+
+/* Header do conteúdo principal */
+.main-content header {
+    background-color: #093962; /* Cor da fonte preferida do usuário */
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Main do conteúdo principal */
+.main-content main {
+    flex-grow: 1; /* Faz o main ocupar o máximo de espaço possível */
+    max-width: 1200px; /* Largura original da agenda */
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* Footer do conteúdo principal */
+.main-content footer {
+    background-color: #093962; /* Cor principal do seu tema */
+    color: #ffffff;
+    text-align: center;
+    padding: 15px 0;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: auto; /* Empurra o footer para o final do main-content */
+}
+
+/* Overlay para quando o menu está aberto em telas pequenas */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* Estilos para o restante do conteúdo da agenda (mantidos e ajustados) */
+h1, h2 {
+    color: #093962;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Seção de Botões de Alternância (mantida) */
+.toggle-buttons-section {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.toggle-btn {
+    background-color: #093962;
+    color: #ffffff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+.toggle-btn:hover {
+    background-color: #062a4b;
+    transform: translateY(-2px);
+}
+
+.toggle-btn.active {
+    background-color: #28a745;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+/* Classe para ocultar seções */
+.hidden-section {
+    display: none;
+}
+
+/* Seção de Filtros */
+.filter-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+}
+
+.filter-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.filter-group .form-group {
+    margin-bottom: 0;
+}
+
+.filter-group label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.filter-group input[type="date"]
+.filter-group select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%204.8%201.8%209.1%205.4%2013.2l128%20128c3.9%203.9%208.7%205.8%2013.2%205.8s9.3-1.9%2013.2-5.8l128-128c3.9-3.9%205.8-8.7%205.8-13.2%200-4.8-1.8-9.1-5.4-13.2z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px;
+}
+
+#filter-area{
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;  
+}
+
+#filter-stage {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#filter-activity {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#clear-filters-btn {
+    background-color: #dc3545;
+    color: #ffffff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    grid-column: span 1;
+    align-self: flex-end;
+}
+
+#clear-filters-btn:hover {
+    background-color: #c82333;
+}
+
+/* Seção de Formulário */
+.form-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+}
+
+#activity-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="date"],
+.form-group input[type="text"],
+.form-group input[type="time"],
+.form-group textarea {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.form-actions {
+    grid-column: span 2;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+#submit-btn {
+    background-color: #28a745;
+    color: #ffffff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#submit-btn:hover {
+    background-color: #218838;
+}
+
+#cancel-edit-btn {
+    background-color: #6c757d;
+    color: #ffffff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#cancel-edit-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Classe para ocultar elementos */
+.hidden {
+    display: none !important;
+}
+
+/* Seção de Lista de Atividades */
+.list-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+#activities-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+#activities-table th,
+#activities-table td {
+    border: 1px solid #e0e0e0;
+    padding: 12px 15px;
+    text-align: left;
+    vertical-align: top;
+    white-space: normal;
+}
+
+#activities-table th {
+    background-color: #093962;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#activities-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#activities-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+#activities-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Larguras e comportamentos específicos para cada coluna */
+#activities-table th:nth-child(1), /* ID */
+#activities-table td:nth-child(1) {
+    width: 5%;
+    min-width: 40px;
+    white-space: nowrap;
+}
+#activities-table th:nth-child(2), /* Data */
+#activities-table td:nth-child(2) {
+    width: 10%;
+    min-width: 90px;
+    white-space: nowrap;
+}
+#activities-table th:nth-child(3), /* Área */
+#activities-table td:nth-child(3) {
+    width: 15%;
+    min-width: 100px;
+    white-space: normal;
+}
+#activities-table th:nth-child(4), /* Atividade */
+#activities-table td:nth-child(4) {
+    width: 20%;
+    min-width: 120px;
+    white-space: normal;
+}
+#activities-table th:nth-child(5), /* Etapa */
+#activities-table td:nth-child(5) {
+    width: 15%;
+    min-width: 100px;
+    white-space: normal;
+}
+#activities-table th:nth-child(6), /* Descrição */
+#activities-table td:nth-child(6) {
+    width: 20%;
+    min-width: 150px;
+    white-space: normal;
+}
+#activities-table th:nth-child(7), /* Ações */
+#activities-table td:nth-child(7) {
+    width: 15%;
+    min-width: 120px;
+    white-space: nowrap;
+    padding: 5px 10px;
+}
+
+/* Estilos para os botões de ação na tabela */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    white-space: nowrap;
+    height: 100%;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.action-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.edit-btn {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.edit-btn:hover {
+    background-color: #0056b3;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Estilos da Paginação */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    flex-wrap: wrap; /* Permite que os itens quebrem em telas menores */
+    gap: 10px; /* Espaçamento entre os grupos */
+}
+
+.records-per-page label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #555;
+}
+
+.records-per-page select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap; /* Permite que os botões de página quebrem */
+}
+
+.pagination-buttons button,
+.pagination-buttons .page-number {
+    background-color: #093962;
+    color: #ffffff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 35px; /* Largura mínima para botões de página */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.pagination-buttons button:hover:not(:disabled),
+.pagination-buttons .page-number:hover:not(.active) {
+    background-color: #062a4b;
+}
+
+.pagination-buttons button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination-buttons .page-number.active {
+    background-color: #28a745; /* Cor de destaque para a página atual */
+    font-weight: bold;
+    cursor: default;
+}
+
+#import-excel-data-btn {
+    background-color: #007bff; /* Azul para Importar */
+    color: #ffffff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    grid-column: span 1; /* Para alinhar com os outros botões no grid */
+    align-self: flex-end; /* Para alinhar na parte inferior do grid */
+}
+
+#import-excel-data-btn:hover {
+    background-color: #0056b3;
+}
+
+/* ===================================
+   ESTILOS PARA BOTÕES DE BACKUP
+   =================================== */
+
+.backup-section {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 2px dashed #6c757d;
+}
+
+.backup-btn {
+    background-color: #6c757d;
+    color: #ffffff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex-grow: 1;
+    max-width: 300px;
+    font-weight: bold;
+}
+
+.backup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.export-btn {
+    background-color: #17a2b8; /* Azul ciano */
+}
+
+.export-btn:hover {
+    background-color: #138496;
+}
+
+.import-btn {
+    background-color: #ffc107; /* Amarelo/laranja */
+    color: #000000;
+}
+
+.import-btn:hover {
+    background-color: #e0a800;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    /* Menu Lateral em telas pequenas */
+    .side-menu {
+        width: 100%; /* Menu ocupa toda a largura em telas pequenas */
+        padding: 20px 15px;
+    }
+
+    /* Botão de alternância do menu em telas pequenas */
+    .menu-toggle-btn {
+        left: 15px;
+        top: 15px;
+        font-size: 1.2rem;
+        padding: 8px 12px;
+    }
+
+    /* Botão de alternância do menu quando aberto em telas pequenas */
+    .menu-toggle-btn.menu-open {
+        left: 15px; /* Volta para a posição original, pois o menu sobrepõe */
+    }
+
+    /* Conteúdo principal em telas pequenas */
+    .main-content {
+        margin-left: 0 !important; /* Garante que o conteúdo não seja empurrado */
+    }
+
+    /* Ajustes para seções da agenda em telas pequenas */
+    .toggle-buttons-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .toggle-btn {
+        max-width: 100%;
+    }
+
+    #activity-form {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        grid-column: span 1;
+        justify-content: center;
+    }
+
+    .filter-group {
+        grid-template-columns: 1fr;
+    }
+
+    #clear-filters-btn {
+        grid-column: span 1;
+    }
+
+    .form-section, .list-section, .filter-section {
+        padding: 20px;
+    }
+
+    /* Ajustes de tabela em telas pequenas */
+    #activities-table th,
+    #activities-table td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        white-space: normal;
+        vertical-align: top;
+    }
+
+    #activities-table th:nth-child(1), #activities-table td:nth-child(1),
+    #activities-table th:nth-child(2), #activities-table td:nth-child(2),
+    #activities-table th:nth-child(3), #activities-table td:nth-child(3),
+    #activities-table th:nth-child(4), #activities-table td:nth-child(4),
+    #activities-table th:nth-child(5), #activities-table td:nth-child(5),
+    #activities-table th:nth-child(6), #activities-table td:nth-child(6),
+    #activities-table th:nth-child(7), #activities-table td:nth-child(7) {
+        width: auto;
+        min-width: auto;
+    }
+
+    #activities-table th:last-child,
+    #activities-table td:last-child {
+        min-width: 120px;
+    }
+
+    .action-buttons {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons button {
+        width: auto;
+        flex-grow: 1;
+        max-width: 48%;
+    }
+
+    /* Ajustes de paginação em telas pequenas */
+    .pagination-controls {
+        flex-direction: column; /* Empilha os controles de paginação */
+        align-items: center;
+    }
+
+    .records-per-page {
+        margin-bottom: 15px;
+    }
+
+    .pagination-buttons {
+        justify-content: center; /* Centraliza os botões de página */
+    }
+
+        #import-excel-data-btn {
+        grid-column: span 1; /* Garante que ocupe uma coluna em mobile */
+        width: 100%; /* Ocupa a largura total */
+    }
+
+    .backup-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .backup-btn {
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Atividades</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Botão para abrir/fechar o menu lateral -->
+        <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
+
+        <!-- Menu Lateral -->
+        <aside id="side-menu" class="side-menu">
+            <div class="menu-header">
+                <h3>Navegação</h3>
+                <button id="close-menu-btn" class="close-menu-btn">X</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="checklist.html" class="menu-link ">Checklist</a></li>
+                    <li><a href="agenda.html" class="menu-link active">Agenda</a></li>
+                    <li><a href="relatorio.html" class="menu-link">Reunião</a></li>
+                    <li><a href="reporte.html" class="menu-link">Reporte</a></li>
+                    <!-- Adicione outros links aqui se precisar -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal da Agenda -->
+        <div class="main-content">
+            <header>
+                <h1>Minha Agenda de Atividades</h1>
+            </header>
+
+        <!-- Seção de Backup/Restauração -->
+        <section class="backup-section">
+            <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
+                📥 Exportar Dados (Backup)
+            </button>
+            <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
+                📤 Importar Dados (Restaurar)
+            </button>
+        </section>
+
+            <main>
+                <section class="toggle-buttons-section">
+                    <button id="toggle-filter-btn" class="toggle-btn">Filtrar Atividades</button>
+                    <button id="toggle-add-btn" class="toggle-btn">Cadastrar Nova Atividade</button>
+                </section>
+
+                <section class="filter-section hidden-section">
+                    <h2>Filtrar Atividades</h2>
+                    <div class="filter-group">
+                        <div class="form-group">
+                            <label for="filter-start-date">Data Inicial:</label>
+                            <input type="date" id="filter-start-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-end-date">Data Final:</label>
+                            <input type="date" id="filter-end-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-area">Área:</label>
+                            <select id="filter-area">
+                                <option value="">Todas as Áreas</option>
+                                <!-- Opções serão preenchidas pelo JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-activity">Atividade:</label>
+                            <select id="filter-activity">
+                                <option value="">Todas as Atividades</option>
+                                <!-- Opções serão preenchidas pelo JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-stage">Etapa:</label>
+                            <select id="filter-stage">
+                                <option value="">Todas as Etapas</option>
+                                <!-- Opções serão preenchidas pelo JavaScript -->
+                            </select>
+                        </div>
+                        <button id="clear-filters-btn">Limpar Filtros</button>
+                        <!-- NOVO BOTÃO DE IMPORTAÇÃO -->
+                        <button id="import-excel-data-btn" class="import-btn">Importar Dados do Excel</button>
+                    </div>
+                </section>
+
+                <section class="form-section hidden-section">
+                    <h2>Cadastrar Nova Atividade</h2>
+                    <form id="activity-form">
+                        <input type="hidden" id="activity-id">
+                        <div class="form-group">
+                            <label for="activity-date">Data:</label>
+                            <input type="date" id="activity-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-area">Área:</label>
+                            <input type="text" id="activity-area" placeholder="Ex: Processos" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-name">Atividade:</label>
+                            <input type="text" id="activity-name" placeholder="Ex: Painel Lista Mestra BI" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-stage">Etapa:</label>
+                            <input type="text" id="activity-stage" placeholder="Ex: Upload de Registro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-description">Descrição:</label>
+                            <textarea id="activity-description" rows="3" placeholder="Detalhes da atividade..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="submit-btn">Adicionar Atividade</button>
+                            <button type="button" id="cancel-edit-btn" class="hidden">Cancelar Edição</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="list-section">
+                    <h2>Atividades Cadastradas</h2>
+                    <div class="table-container">
+                        <table id="activities-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Data</th>
+                                    <th>Área</th>
+                                    <th>Atividade</th>
+                                    <th>Etapa</th>
+                                    <th>Descrição</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- As atividades serão inseridas aqui pelo JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination-controls">
+                        <div class="records-per-page">
+                            <label for="records-per-page-select">Registros por página:</label>
+                            <select id="records-per-page-select">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                        <div class="pagination-buttons">
+                            <button id="prev-page-btn" disabled>&laquo; Anterior</button>
+                            <div id="page-numbers">
+                                <!-- Números das páginas serão inseridos aqui pelo JavaScript -->
+                            </div>
+                            <button id="next-page-btn">&raquo; Próximo</button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer>
+                <p>&copy; 2026 Agenda de Atividades. Desenvolvido por JOSE.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="backup.js"></script>
+</body>
+</html>

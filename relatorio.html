@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Reuniões e Acompanhamentos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="relatorio.css.css">
+    <!-- Inclua a biblioteca FullCalendar para o calendário -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+</head>
+<body>
+    <div class="app-container">
+        <!-- Botão para abrir/fechar o menu lateral -->
+        <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
+
+        <!-- Menu Lateral -->
+        <aside id="side-menu" class="side-menu">
+            <div class="menu-header">
+                <h3>Navegação</h3>
+                <button id="close-menu-btn" class="close-menu-btn">X</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="checklist.html" class="menu-link ">Checklist</a></li>
+                    <li><a href="agenda.html" class="menu-link">Agenda</a></li>
+                    <li><a href="relatorio.html" class="menu-link active">Reunião</a></li>
+                    <li><a href="reporte.html" class="menu-link">Reporte</a></li>
+                    <!-- Adicione outros links aqui se precisar -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Overlay para telas pequenas -->
+        <div class="overlay"></div>
+
+        <!-- Conteúdo Principal da Página de Reuniões -->
+        <div class="main-content">
+            <header>
+                <h1>Registro de Reuniões e Acompanhamentos</h1>
+            </header>
+
+        <!-- Seção de Backup/Restauração -->
+        <section class="backup-section">
+            <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
+                📥 Exportar Dados (Backup)
+            </button>
+            <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
+                📤 Importar Dados (Restaurar)
+            </button>
+        </section>
+
+            <main>
+                <section class="toggle-buttons-section">
+                    <button id="toggle-filter-btn" class="toggle-btn">Filtrar Reuniões</button>
+                    <button id="toggle-add-btn" class="toggle-btn">Registrar Nova Reunião</button>
+                </section>
+
+                <section class="filter-section hidden-section">
+                    <h2>Filtrar Reuniões</h2>
+                    <div class="filter-group">
+                        <div class="form-group">
+                            <label for="filter-start-date">Data Inicial:</label>
+                            <input type="date" id="filter-start-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-end-date">Data Final:</label>
+                            <input type="date" id="filter-end-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-title">Título:</label>
+                            <input type="text" id="filter-title" placeholder="Filtrar por título">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-subject">Assunto:</label>
+                            <input type="text" id="filter-subject" placeholder="Filtrar por assunto">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-participants">Participantes:</label>
+                            <input type="text" id="filter-participants" placeholder="Filtrar por participantes">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-area">Área:</label>
+                            <select id="filter-area">
+                                <option value="">Todas as Áreas</option>
+                                <!-- Opções serão preenchidas pelo JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-local">Local:</label>
+                            <input type="text" id="filter-local" placeholder="Filtrar por local">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-status">Status:</label>
+                            <select id="filter-status">
+                                <option value="">Todos os Status</option>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Concluído">Concluído</option>
+                                <option value="Não Realizado">Não Realizado</option>
+                            </select>
+                        </div>
+                        <button id="clear-filters-btn">Limpar Filtros</button>
+                    </div>
+                </section>
+
+                <section class="form-section hidden-section">
+                    <h2>Registrar Nova Reunião</h2>
+                    <form id="meeting-form">
+                        <input type="hidden" id="meeting-id">
+                        <div class="form-group">
+                            <label for="meeting-date">Data:</label>
+                            <input type="date" id="meeting-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-time">Horário:</label>
+                            <input type="time" id="meeting-time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-title">Título:</label>
+                            <input type="text" id="meeting-title" placeholder="Título da Reunião" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-subject">Assunto:</label>
+                            <input type="text" id="meeting-subject" placeholder="Assunto Principal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-participants">Participantes:</label>
+                            <input type="text" id="meeting-participants" placeholder="Nomes separados por vírgula">
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-area">Área:</label>
+                            <select id="meeting-area" required>
+                                <option value="">Selecione ou Adicione</option>
+                                <!-- Opções serão preenchidas pelo JavaScript -->
+                            </select>
+                            <button type="button" id="add-area-btn" class="small-btn">Adicionar Nova Área</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-local">Local:</label>
+                            <input type="text" id="meeting-local" placeholder="Local da Reunião">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="meeting-observations">Observações:</label>
+                            <textarea id="meeting-observations" rows="4" placeholder="Detalhes e notas da reunião..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-status">Status:</label>
+                            <select id="meeting-status" required>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Concluído">Concluído</option>
+                                <option value="Não Realizado">Não Realizado</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="meeting-next-steps">Próximos Passos:</label>
+                            <textarea id="meeting-next-steps" rows="4" placeholder="Ações e responsáveis..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="submit-btn">Registrar Reunião</button>
+                            <button type="button" id="cancel-edit-btn" class="hidden">Cancelar Edição</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="calendar-section">
+                    <h2>Visualização em Calendário</h2>
+                    <div id="calendar"></div>
+                </section>
+
+                <section class="list-section">
+                    <h2>Reuniões Registradas</h2>
+                    <div class="table-container">
+                        <table id="meetings-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Horário</th>
+                                    <th>Assunto</th>
+                                    <th>Área</th>
+                                    <th>Local</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- As reuniões serão inseridas aqui pelo JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Modal de Visualização -->
+                    <div id="meeting-modal" class="meeting-modal hidden" role="dialog" aria-modal="true" aria-labelledby="meeting-modal-title">
+                    <div class="meeting-modal__backdrop" data-modal-close="true"></div>
+
+                    <div class="meeting-modal__content" role="document">
+                        <div class="meeting-modal__header">
+                        <h2 id="meeting-modal-title">Detalhes da Reunião</h2>
+                        <button type="button" class="meeting-modal__close" aria-label="Fechar" data-modal-close="true">×</button>
+                        </div>
+
+                        <div id="meeting-modal-body" class="meeting-modal__body"></div>
+                    </div>
+                    </div>
+
+                    <div class="pagination-controls">
+                        <div class="records-per-page">
+                            <label for="records-per-page-select">Registros por página:</label>
+                            <select id="records-per-page-select">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                        <div class="pagination-buttons">
+                            <button id="prev-page-btn" disabled>&laquo; Anterior</button>
+                            <div id="page-numbers">
+                                <!-- Números das páginas serão inseridos aqui pelo JavaScript -->
+                            </div>
+                            <button id="next-page-btn">&raquo; Próximo</button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer>
+                <p>&copy; 2026 Registro de Reuniões. Desenvolvido por JOSE.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Inclua a biblioteca FullCalendar e seus plugins -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/pt-br.js'></script>
+    <script src="relatorio.js"></script>
+    <script src="backup.js"></script>
+</body>
+</html>
