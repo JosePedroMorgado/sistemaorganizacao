@@ -135,6 +135,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainContent = document.querySelector('.main-content');
     let overlay = document.querySelector('.overlay'); // Pode ser null se não existir no HTML ainda
 
+    // Modal de Visualização (ADICIONAR após as outras declarações)
+    const viewActivityModal = document.getElementById('view-activity-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalEditBtn = document.getElementById('modal-edit-btn');
+    const modalDeleteBtn = document.getElementById('modal-delete-btn');
+
+    const viewActivityId = document.getElementById('view-activity-id');
+    const viewActivityDate = document.getElementById('view-activity-date');
+    const viewActivityArea = document.getElementById('view-activity-area');
+    const viewActivityName = document.getElementById('view-activity-name');
+    const viewActivityStage = document.getElementById('view-activity-stage');
+    const viewActivityDescription = document.getElementById('view-activity-description');
+
+
     // Se o overlay não existir, cria um (para garantir compatibilidade)
     if (!overlay) {
         overlay = document.createElement('div');
@@ -328,30 +343,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 
-        paginatedActivities.forEach(activity => {
-            const row = activitiesTableBody.insertRow();
-            row.insertCell().textContent = activity.id;
-            row.insertCell().textContent = formatDateToBR(activity.data);
-            row.insertCell().textContent = activity.area;
-            row.insertCell().textContent = activity.atividade;
-            row.insertCell().textContent = activity.etapa;
-            row.insertCell().textContent = activity.descricao.replace(/\n/g, ' ');
+paginatedActivities.forEach(activity => {
+    const row = activitiesTableBody.insertRow();
+    row.insertCell().textContent = activity.id;
+    row.insertCell().textContent = formatDateToBR(activity.data);
+    row.insertCell().textContent = activity.area;
+    row.insertCell().textContent = activity.atividade;
+    row.insertCell().textContent = activity.etapa;
 
-            const actionsCell = row.insertCell();
-            actionsCell.classList.add('action-buttons');
+        // Limita a descrição a 50 caracteres
+        const descriptionCell = row.insertCell();
+        const maxLength = 50;
+        const descriptionText = activity.descricao.replace(/\n/g, ' ');
+        if (descriptionText.length > maxLength) {
+            descriptionCell.textContent = descriptionText.substring(0, maxLength) + '...';
+            descriptionCell.title = descriptionText; // Tooltip com descrição completa
+        } else {
+            descriptionCell.textContent = descriptionText;
+        }
 
-            const editButton = document.createElement('button');
-            editButton.textContent = 'Editar';
-            editButton.classList.add('edit-btn');
-            editButton.addEventListener('click', () => editActivity(activity.id));
-            actionsCell.appendChild(editButton);
+        const actionsCell = row.insertCell();
+        actionsCell.classList.add('action-buttons');
 
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Excluir';
-            deleteButton.classList.add('delete-btn');
-            deleteButton.addEventListener('click', () => deleteActivity(activity.id));
-            actionsCell.appendChild(deleteButton);
+        // Botão Visualizar
+        const viewButton = document.createElement('button');
+        viewButton.textContent = 'Visualizar';
+        viewButton.classList.add('view-btn');
+        viewButton.addEventListener('click', function() {
+            openViewModal(activity.id);
         });
+        actionsCell.appendChild(viewButton);
+
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Editar';
+        editButton.classList.add('edit-btn');
+        editButton.addEventListener('click', () => editActivity(activity.id));
+        actionsCell.appendChild(editButton);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Excluir';
+        deleteButton.classList.add('delete-btn');
+        deleteButton.addEventListener('click', () => deleteActivity(activity.id));
+        actionsCell.appendChild(deleteButton);
+    });
+
 
         renderPaginationButtons(filteredActivities.length); // Atualiza os botões de paginação
     }
@@ -430,6 +465,33 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Dados do Excel importados com sucesso!');
     }
 
+    // --- Funções do Modal de Visualização ---
+    function openViewModal(id) {
+        const activity = activities.find(function(a) {
+            return a.id === id;
+        });
+        if (activity) {
+            viewActivityId.value = activity.id;
+            viewActivityDate.value = formatDateToBR(activity.data);
+            viewActivityArea.value = activity.area;
+            viewActivityName.value = activity.atividade;
+            viewActivityStage.value = activity.etapa;
+            viewActivityDescription.value = activity.descricao;
+
+            modalEditBtn.dataset.activityId = id;
+            modalDeleteBtn.dataset.activityId = id;
+
+            viewActivityModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeViewModal() {
+        viewActivityModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    
     // --- Event Listeners ---
     activityForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -564,6 +626,35 @@ document.addEventListener('DOMContentLoaded', () => {
             menuToggleBtn.classList.remove('menu-open');
         }
     });
+
+    // Event listeners para o modal (ADICIONAR)
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeViewModal);
+    }
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', closeViewModal);
+    }
+    if (modalEditBtn) {
+        modalEditBtn.addEventListener('click', function() {
+            const activityId = parseInt(modalEditBtn.dataset.activityId);
+            closeViewModal();
+            editActivity(activityId);
+        });
+    }
+    if (modalDeleteBtn) {
+        modalDeleteBtn.addEventListener('click', function() {
+            const activityId = parseInt(modalDeleteBtn.dataset.activityId);
+            deleteActivity(activityId);
+        });
+    }
+
+    // Fecha o modal ao clicar fora dele
+    window.addEventListener('click', function(event) {
+        if (event.target === viewActivityModal) {
+            closeViewModal();
+        }
+    });
+
 
     // --- Inicialização ---
     loadActivities();
