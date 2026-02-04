@@ -1,102 +1,109 @@
 // ===================================
-// FUNÇÕES DE BACKUP E RESTAURAÇÃO
+// SISTEMA DE BACKUP UNIFICADO
+// Salva TODOS os dados de todas as páginas
 // ===================================
 
-// Função para exportar todos os dados do localStorage para um arquivo JSON
 function exportData() {
-    const data = {
-        reports: JSON.parse(localStorage.getItem('reports')) || [],
-        meetings: JSON.parse(localStorage.getItem('meetings')) || [],
-        agenda: JSON.parse(localStorage.getItem('agenda')) || [],
-        checklist: JSON.parse(localStorage.getItem('checklist')) || [],
-        areas: JSON.parse(localStorage.getItem('areas')) || [],
+    const allData = {
+        version: '1.0',
         exportDate: new Date().toISOString(),
-        version: '1.0'
+        data: {
+            checklist: JSON.parse(localStorage.getItem('checklist') || '[]'),
+            agendaActivities: JSON.parse(localStorage.getItem('agendaActivities') || '[]'),
+            meetings: JSON.parse(localStorage.getItem('meetings') || '[]'),
+            reports: JSON.parse(localStorage.getItem('reports') || '[]'),
+            wiki: JSON.parse(localStorage.getItem('wiki') || '[]')
+        }
     };
 
-    // Converte o objeto para JSON formatado
-    const jsonString = JSON.stringify(data, null, 2);
+    const dataStr = JSON.stringify(allData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
 
-    // Cria um blob com o conteúdo JSON
-    const blob = new Blob([jsonString], { type: 'application/json' });
-
-    // Cria um link de download
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
 
-    // Nome do arquivo com data e hora
-    const now = new Date();
-    const dateString = now.toISOString().slice(0, 10); // AAAA-MM-DD
-    const timeString = now.toTimeString().slice(0, 5).replace(':', '-'); // HH-MM
-    link.download = `backup_${dateString}_${timeString}.json`;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+    link.download = 'backup_completo_' + timestamp + '.json';
 
-    // Simula o clique para baixar
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
-    // Libera o objeto URL
     URL.revokeObjectURL(url);
 
-    alert('Backup exportado com sucesso!');
+    alert('Backup completo exportado com sucesso!\n\nDados exportados:\n' +
+          '✅ Checklist: ' + allData.data.checklist.length + ' itens\n' +
+          '✅ Agenda: ' + allData.data.agendaActivities.length + ' atividades\n' +
+          '✅ Reuniões: ' + allData.data.meetings.length + ' reuniões\n' +
+          '✅ Reports: ' + allData.data.reports.length + ' reports\n' +
+          '✅ Wiki: ' + allData.data.wiki.length + ' páginas');
 }
 
-// Função para importar dados de um arquivo JSON
 function importData() {
-    // Cria um input file temporário
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
 
-    input.onchange = (event) => {
+    input.onchange = function(event) {
         const file = event.target.files[0];
-        if (!file) {
-            return;
-        }
+        if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = function(e) {
             try {
-                const data = JSON.parse(e.target.result);
+                const importedData = JSON.parse(e.target.result);
 
-                // Valida se o arquivo tem a estrutura esperada
-                if (!data.version || !data.exportDate) {
-                    alert('Arquivo inválido! Por favor, selecione um arquivo de backup válido.');
+                if (!importedData.data) {
+                    alert('Erro: Arquivo de backup inválido!');
                     return;
                 }
 
-                // Confirma antes de sobrescrever os dados
-                const confirmMsg = `Tem certeza que deseja importar este backup?\n\n` +
-                    `Data do backup: ${new Date(data.exportDate).toLocaleString('pt-BR')}\n\n` +
-                    `ATENÇÃO: Isso irá SUBSTITUIR todos os dados atuais!`;
+                const confirmMessage = 
+                    'ATENÇÃO: Esta ação irá SUBSTITUIR todos os dados atuais!\n\n' +
+                    'Dados que serão importados:\n' +
+                    '✅ Checklist: ' + (importedData.data.checklist ? importedData.data.checklist.length : 0) + ' itens\n' +
+                    '✅ Agenda: ' + (importedData.data.agendaActivities ? importedData.data.agendaActivities.length : 0) + ' atividades\n' +
+                    '✅ Reuniões: ' + (importedData.data.meetings ? importedData.data.meetings.length : 0) + ' reuniões\n' +
+                    '✅ Reports: ' + (importedData.data.reports ? importedData.data.reports.length : 0) + ' reports\n' +
+                    '✅ Wiki: ' + (importedData.data.wiki ? importedData.data.wiki.length : 0) + ' páginas\n\n' +
+                    'Deseja continuar?';
 
-                if (!confirm(confirmMsg)) {
+                if (!confirm(confirmMessage)) {
                     return;
                 }
 
-                // Restaura os dados no localStorage
-                if (data.reports) localStorage.setItem('reports', JSON.stringify(data.reports));
-                if (data.meetings) localStorage.setItem('meetings', JSON.stringify(data.meetings));
-                if (data.agenda) localStorage.setItem('agenda', JSON.stringify(data.agenda));
-                if (data.checklist) localStorage.setItem('checklist', JSON.stringify(data.checklist));
-                if (data.areas) localStorage.setItem('areas', JSON.stringify(data.areas));
+                // Importa os dados
+                if (importedData.data.checklist) {
+                    localStorage.setItem('checklist', JSON.stringify(importedData.data.checklist));
+                }
+                if (importedData.data.agendaActivities) {
+                    localStorage.setItem('agendaActivities', JSON.stringify(importedData.data.agendaActivities));
+                }
+                if (importedData.data.meetings) {
+                    localStorage.setItem('meetings', JSON.stringify(importedData.data.meetings));
+                }
+                if (importedData.data.reports) {
+                    localStorage.setItem('reports', JSON.stringify(importedData.data.reports));
+                }
+                if (importedData.data.wiki) {
+                    localStorage.setItem('wiki', JSON.stringify(importedData.data.wiki));
+                }
 
-                alert('Backup importado com sucesso! A página será recarregada.');
-                location.reload(); // Recarrega a página para atualizar os dados
+                alert('✅ Dados importados com sucesso!\n\nRecarregue a página para visualizar os dados importados.');
+
+                // Recarrega a página após 2 segundos
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
 
             } catch (error) {
-                alert('Erro ao importar o arquivo! Verifique se o arquivo é um backup válido.\n\nErro: ' + error.message);
+                alert('Erro ao importar dados: ' + error.message);
+                console.error('Erro ao importar:', error);
             }
         };
 
         reader.readAsText(file);
     };
 
-    // Simula o clique para abrir o seletor de arquivos
     input.click();
 }
-
-// Torna as funções disponíveis globalmente
-window.exportData = exportData;
-window.importData = importData;

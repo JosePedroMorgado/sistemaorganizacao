@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki Interna</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Botão para abrir/fechar o menu lateral -->
+        <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
+
+        <!-- Menu Lateral -->
+        <aside id="side-menu" class="side-menu">
+            <div class="menu-header">
+                <h3>Navegação</h3>
+                <button id="close-menu-btn" class="close-menu-btn">X</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="checklist.html" class="menu-link">Checklist</a></li>
+                    <li><a href="agenda.html" class="menu-link">Agenda</a></li>
+                    <li><a href="reunioes.html" class="menu-link">Reuniões</a></li>
+                    <li><a href="report.html" class="menu-link">Report</a></li>
+                    <li><a href="wiki.html" class="menu-link active">Wiki</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Overlay para telas pequenas -->
+        <div class="overlay"></div>
+
+        <!-- Conteúdo Principal da Wiki -->
+        <div class="main-content">
+            <header>
+                <h1>📚 Wiki Interna</h1>
+            </header>
+
+            <main>
+                <!-- Seção de Backup -->
+                <section class="backup-section">
+                    <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
+                        📥 Exportar Dados (Backup)
+                    </button>
+                    <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
+                        📤 Importar Dados (Restaurar)
+                    </button>
+                </section>
+
+                <!-- Barra de Ações -->
+                <section class="actions-bar">
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="🔍 Buscar páginas...">
+                    </div>
+                    <button id="new-page-btn" class="new-page-btn">+ Nova Página</button>
+                </section>
+
+                <!-- Container Principal (Índice + Conteúdo) -->
+                <div class="wiki-container">
+                    <!-- Índice Lateral -->
+                    <aside class="wiki-sidebar">
+                        <h3>📑 Índice</h3>
+                        <div id="wiki-index" class="wiki-index">
+                            <!-- Índice será gerado dinamicamente -->
+                        </div>
+                    </aside>
+
+                    <!-- Área de Conteúdo -->
+                    <section class="wiki-content">
+                        <!-- Breadcrumbs -->
+                        <nav id="breadcrumbs" class="breadcrumbs">
+                            <!-- Breadcrumbs serão gerados dinamicamente -->
+                        </nav>
+
+                        <!-- Visualização da Página -->
+                        <div id="page-view" class="page-view">
+                            <div class="welcome-message">
+                                <h2>👋 Bem-vindo à Wiki Interna!</h2>
+                                <p>Selecione uma página no índice lateral ou crie uma nova página para começar.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+
+            <footer>
+                <p>&copy; 2026 Wiki Interna. Todos os direitos reservados.</p>
+            </footer>
+        </div>
+    </div>
+
+<!-- Modal de Criar/Editar Página -->
+<div id="edit-page-modal" class="modal">
+    <div class="modal-content modal-large">
+        <span class="close-button" id="close-edit-modal-btn">&times;</span>
+        <h2 id="modal-title">Nova Página</h2>
+        <form id="page-form">
+            <input type="hidden" id="page-id">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="page-title">Título da Página: *</label>
+                    <input type="text" id="page-title" required placeholder="Ex: Processo de Vendas">
+                </div>
+                <div class="form-group">
+                    <label for="page-author">Autor: *</label>
+                    <input type="text" id="page-author" required placeholder="Seu nome">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="page-category">Categoria: *</label>
+                    <select id="page-category" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="Home">Home</option>
+                        <option value="Processos">Processos</option>
+                        <option value="Tutoriais">Tutoriais</option>
+                        <option value="Políticas">Políticas</option>
+                        <option value="FAQ">FAQ</option>
+                        <option value="Técnico">Técnico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="page-parent">Página Pai (opcional):</label>
+                    <select id="page-parent">
+                        <option value="">Nenhuma (Página Raiz)</option>
+                        <!-- Opções serão preenchidas dinamicamente -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="page-tags">Tags (separadas por vírgula):</label>
+                <input type="text" id="page-tags" placeholder="Ex: vendas, processo, comercial">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="page-content">Conteúdo: *</label>
+                <textarea id="page-content" required rows="15" placeholder="Digite o conteúdo da página...
+
+Dica: Use [[Nome da Página]] para criar links internos entre páginas."></textarea>
+            </div>
+
+            <div class="form-help">
+                <strong>💡 Dica:</strong> Para criar links entre páginas, use <code>[[Título da Página]]</code>. 
+                Exemplo: "Veja mais em [[Processo de Atendimento]]"
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="modal-btn save-btn">Salvar Página</button>
+                <button type="button" id="cancel-edit-btn" class="modal-btn cancel-btn">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <!-- Modal de Histórico de Versões -->
+    <div id="history-modal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close-button" id="close-history-modal-btn">&times;</span>
+            <h2>📝 Histórico de Edições</h2>
+            <div id="history-content">
+                <!-- Histórico será gerado dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button id="close-history-btn" class="modal-btn close-footer-btn">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="backup.js"></script>
+    <script src="wiki.js"></script>
+</body>
+</html>
