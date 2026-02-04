@@ -664,6 +664,172 @@ h1, h2 {
     background-color: #e0a800;
 }
 
+/* ===================================
+   MODAL DE VISUALIZAÇÃO DE ATIVIDADE
+   =================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.active {
+    display: block;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 0;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.modal-content h2 {
+    background-color: #093962;
+    color: #ffffff;
+    padding: 20px;
+    margin: 0;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+}
+
+.close-button {
+    color: #ffffff;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #f1f1f1;
+}
+
+#view-activity-form {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+#view-activity-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+#view-activity-form .form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+#view-activity-form .form-group input,
+#view-activity-form .form-group textarea {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+#view-activity-form .form-group.full-width {
+    grid-column: span 2;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #eee;
+    background-color: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: #ffffff;
+}
+
+.modal-btn.edit-btn {
+    background-color: #007bff;
+}
+
+.modal-btn.edit-btn:hover {
+    background-color: #0056b3;
+}
+
+.modal-btn.delete-btn {
+    background-color: #dc3545;
+}
+
+.modal-btn.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.modal-btn.close-footer-btn {
+    background-color: #6c757d;
+}
+
+.modal-btn.close-footer-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Responsividade do Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+
+    #view-activity-form {
+        grid-template-columns: 1fr;
+    }
+
+    #view-activity-form .form-group.full-width {
+        grid-column: auto;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-footer button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .modal-footer button:last-child {
+        margin-bottom: 0;
+    }
+}
+
+
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
     /* Menu Lateral em telas pequenas */

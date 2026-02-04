@@ -167,6 +167,45 @@
         </div>
     </div>
 
+    <!-- Modal de Visualização de Atividade -->
+    <div id="view-activity-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-modal-btn">&times;</span>
+            <h2>Detalhes da Atividade</h2>
+            <form id="view-activity-form">
+                <div class="form-group">
+                    <label for="view-activity-id">ID:</label>
+                    <input type="text" id="view-activity-id" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="view-activity-date">Data:</label>
+                    <input type="text" id="view-activity-date" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="view-activity-area">Área:</label>
+                    <input type="text" id="view-activity-area" disabled>
+                </div>
+                <div class="form-group full-width">
+                    <label for="view-activity-name">Atividade:</label>
+                    <input type="text" id="view-activity-name" disabled>
+                </div>
+                <div class="form-group full-width">
+                    <label for="view-activity-stage">Etapa:</label>
+                    <input type="text" id="view-activity-stage" disabled>
+                </div>
+                <div class="form-group full-width">
+                    <label for="view-activity-description">Descrição Completa:</label>
+                    <textarea id="view-activity-description" disabled rows="6"></textarea>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button id="modal-edit-btn" class="modal-btn edit-btn">Editar</button>
+                <button id="modal-delete-btn" class="modal-btn delete-btn">Excluir</button>
+                <button id="modal-close-btn" class="modal-btn close-footer-btn">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script src="backup.js"></script>
 </body>
