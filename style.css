@@ -829,6 +829,221 @@ h1, h2 {
     }
 }
 
+/* ===================================
+   DASHBOARD
+   =================================== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card.checklist-card {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.stat-card.agenda-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card.meetings-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-card.reports-card {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-card.wiki-card {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.stat-card.total-card {
+    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+.stat-icon {
+    font-size: 3rem;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-info h3 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.stat-info p {
+    margin: 5px 0 10px 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.stat-footer {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Gráfico de Barras */
+.chart-section {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.chart-section h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.chart-container {
+    margin-top: 20px;
+}
+
+.chart-bar {
+    margin-bottom: 20px;
+}
+
+.chart-label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.chart-bar-container {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    height: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-bar-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    color: white;
+    font-weight: bold;
+    transition: width 0.5s ease;
+    border-radius: 8px;
+}
+
+.checklist-bar {
+    background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+}
+
+.agenda-bar {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.meetings-bar {
+    background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+}
+
+.reports-bar {
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.wiki-bar {
+    background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Detalhes */
+.details-section {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.details-section h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.detail-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.detail-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.detail-content p {
+    margin: 8px 0;
+    color: #555;
+}
+
+.detail-content strong {
+    color: #333;
+}
+
+/* Atividade Recente */
+.recent-section {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recent-section h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.recent-content {
+    color: #666;
+    font-style: italic;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
