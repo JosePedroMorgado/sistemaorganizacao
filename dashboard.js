@@ -1,4 +1,14 @@
 // ===================================
+// FUNÇÃO AUXILIAR PARA ATUALIZAR ELEMENTOS (Definida no início)
+// ===================================
+function updateElement(selector, value) {
+    const element = document.querySelector(selector);
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+// ===================================
 // FUNÇÃO DE LOG (necessária para registrar ações de backup/import)
 // ===================================
 function addLog(module, action, description, details) {
@@ -20,13 +30,18 @@ function addLog(module, action, description, details) {
 // ===================================
 
 function exportData() {
+    // ATENÇÃO: Aqui, estamos exportando o objeto meetingsApp completo, se ele existir.
+    // Se você quiser exportar apenas o array de reuniões, ajuste esta linha.
+    const meetingsToExport = JSON.parse(localStorage.getItem('meetingsAppData') || 'null');
+    const actualMeetingsArray = meetingsToExport && meetingsToExport.meetings ? meetingsToExport.meetings : [];
+
     const allData = {
         version: '1.0',
         exportDate: new Date().toISOString(),
         data: {
-            checklist: JSON.parse(localStorage.getItem('checklistTasks') || '[]'), // CORRIGIDO: 'checklist' para 'checklistTasks'
+            checklist: JSON.parse(localStorage.getItem('checklistTasks') || '[]'),
             agendaActivities: JSON.parse(localStorage.getItem('agendaActivities') || '[]'),
-            meetings: JSON.parse(localStorage.getItem('meetings') || '[]'),
+            meetings: actualMeetingsArray, // Usando o array de reuniões de meetingsApp
             reports: JSON.parse(localStorage.getItem('reports') || '[]'),
             wiki: JSON.parse(localStorage.getItem('wiki') || '[]')
         }
@@ -47,7 +62,6 @@ function exportData() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    // REGISTRA O LOG
     addLog('system', 'backup', 'Backup manual exportado', {
         checklist: allData.data.checklist.length,
         agenda: allData.data.agendaActivities.length,
@@ -56,12 +70,14 @@ function exportData() {
         wiki: allData.data.wiki.length
     });
 
-    alert('Backup completo exportado com sucesso!\n\nDados exportados:\n' +
-          '✅ Checklist: ' + allData.data.checklist.length + ' itens\n' +
-          '✅ Agenda: ' + allData.data.agendaActivities.length + ' atividades\n' +
-          '✅ Reuniões: ' + allData.data.meetings.length + ' reuniões\n' +
-          '✅ Reports: ' + allData.data.reports.length + ' reports\n' +
-          '✅ Wiki: ' + allData.data.wiki.length + ' páginas');
+    alert(
+        'Backup completo exportado com sucesso!\n\nDados exportados:\n' +
+        '✅ Checklist: ' + allData.data.checklist.length + ' itens\n' +
+        '✅ Agenda: ' + allData.data.agendaActivities.length + ' atividades\n' +
+        '✅ Reuniões: ' + allData.data.meetings.length + ' reuniões\n' +
+        '✅ Reports: ' + allData.data.reports.length + ' reports\n' +
+        '✅ Wiki: ' + allData.data.wiki.length + ' páginas'
+    );
 }
 
 function importData() {
@@ -99,13 +115,20 @@ function importData() {
 
                 // Importa os dados
                 if (importedData.data.checklist) {
-                    localStorage.setItem('checklistTasks', JSON.stringify(importedData.data.checklist)); // CORRIGIDO: 'checklist' para 'checklistTasks'
+                    localStorage.setItem('checklistTasks', JSON.stringify(importedData.data.checklist));
                 }
                 if (importedData.data.agendaActivities) {
                     localStorage.setItem('agendaActivities', JSON.stringify(importedData.data.agendaActivities));
                 }
+                // ATENÇÃO: Ao importar, precisamos recriar a estrutura meetingsApp.
+                // Assumindo que meetingsApp é um objeto que contém o array 'meetings'.
                 if (importedData.data.meetings) {
-                    localStorage.setItem('meetings', JSON.stringify(importedData.data.meetings));
+                    let currentMeetingsApp = JSON.parse(localStorage.getItem('meetingsAppData') || 'null');
+                    if (!currentMeetingsApp) {
+                        currentMeetingsApp = {}; // Cria um objeto vazio se não existir
+                    }
+                    currentMeetingsApp.meetings = importedData.data.meetings;
+                    localStorage.setItem('meetingsAppData', JSON.stringify(currentMeetingsApp));
                 }
                 if (importedData.data.reports) {
                     localStorage.setItem('reports', JSON.stringify(importedData.data.reports));
@@ -114,7 +137,6 @@ function importData() {
                     localStorage.setItem('wiki', JSON.stringify(importedData.data.wiki));
                 }
 
-                // REGISTRA O LOG
                 addLog('system', 'import', 'Dados importados do backup', {
                     checklist: importedData.data.checklist ? importedData.data.checklist.length : 0,
                     agenda: importedData.data.agendaActivities ? importedData.data.agendaActivities.length : 0,
@@ -155,10 +177,14 @@ function showBackupStatus() {
         message += '⚠️ Nenhuma importação realizada ainda\n';
     }
 
+    // ATENÇÃO: Aqui, estamos lendo o objeto meetingsApp completo, se ele existir.
+    const meetingsFromApp = JSON.parse(localStorage.getItem('meetingsAppData') || 'null');
+    const actualMeetingsArray = meetingsFromApp && meetingsFromApp.meetings ? meetingsFromApp.meetings : [];
+
     const allData = {
-        checklist: JSON.parse(localStorage.getItem('checklistTasks') || '[]'), // CORRIGIDO: 'checklist' para 'checklistTasks'
+        checklist: JSON.parse(localStorage.getItem('checklistTasks') || '[]'),
         agendaActivities: JSON.parse(localStorage.getItem('agendaActivities') || '[]'),
-        meetings: JSON.parse(localStorage.getItem('meetings') || '[]'),
+        meetings: actualMeetingsArray, // Usando o array de reuniões de meetingsApp
         reports: JSON.parse(localStorage.getItem('reports') || '[]'),
         wiki: JSON.parse(localStorage.getItem('wiki') || '[]')
     };
@@ -174,52 +200,226 @@ function showBackupStatus() {
 }
 
 // ===================================
+// FUNÇÕES DE ESTATÍSTICAS DO DASHBOARD (VERSÃO ÚNICA E CORRETA)
+// ===================================
+function loadStatistics() {
+    const checklist = JSON.parse(localStorage.getItem('checklistTasks') || '[]');
+    const agenda = JSON.parse(localStorage.getItem('agendaActivities') || '[]');
+
+    // ATENÇÃO: AQUI ESTÁ A MUDANÇA PRINCIPAL PARA LER meetingsApp.meetings
+    const meetingsFromApp = JSON.parse(localStorage.getItem('meetingsAppData') || 'null');
+    const meetings = meetingsFromApp && meetingsFromApp.meetings ? meetingsFromApp.meetings : [];
+
+    const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+    const wiki = JSON.parse(localStorage.getItem('wiki') || '[]');
+
+    const checklistCompleted = checklist.filter(function(task) { return task.completed; }).length;
+    const checklistPending = checklist.length - checklistCompleted;
+    const checklistPercentage = checklist.length > 0 ? Math.round((checklistCompleted / checklist.length) * 100) : 0;
+
+    const agendaAreas = new Set(agenda.map(function(activity) { return activity.area; })).size;
+
+    const meetingsTotal = meetings.length;
+    const meetingsCompleted = meetings.filter(function(m) { return m.status === 'realizada' || m.status === 'completed'; }).length;
+    const meetingsUpcoming = meetings.filter(function(m) { return m.status === 'próxima' || m.status === 'upcoming'; }).length;
+    const uniqueParticipants = new Set(meetings.flatMap(function(m) { return m.participants || []; })).size;
+
+    const today = new Date();
+    const thisMonth = reports.filter(function(r) {
+        const reportDate = new Date(r.date || r.createdAt);
+        return reportDate.getMonth() === today.getMonth() && reportDate.getFullYear() === today.getFullYear();
+    }).length;
+
+    const thisWeek = reports.filter(function(r) {
+        const reportDate = new Date(r.date || r.createdAt);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return reportDate >= weekAgo && reportDate <= today;
+    }).length;
+
+    const todayReports = reports.filter(function(r) {
+        const reportDate = new Date(r.date || r.createdAt);
+        return reportDate.toDateString() === today.toDateString();
+    }).length;
+
+    const wikiCategories = new Set(wiki.map(function(page) { return page.category; })).size;
+    const wikiTags = new Set(wiki.flatMap(function(page) { return page.tags || []; })).size;
+    const wikiLinks = wiki.reduce(function(count, page) { return count + (page.links ? page.links.length : 0); }, 0);
+
+    const totalRecords = checklist.length + agenda.length + meetingsTotal + reports.length + wiki.length;
+
+    updateDashboardUI({
+        checklist: {
+            total: checklist.length,
+            completed: checklistCompleted,
+            pending: checklistPending,
+            percentage: checklistPercentage
+        },
+        agenda: {
+            total: agenda.length,
+            areas: agendaAreas,
+            activities: agenda.length
+        },
+        meetings: {
+            total: meetingsTotal,
+            completed: meetingsCompleted,
+            upcoming: meetingsUpcoming,
+            participants: uniqueParticipants
+        },
+        reports: {
+            total: reports.length,
+            thisMonth: thisMonth,
+            thisWeek: thisWeek,
+            today: todayReports
+        },
+        wiki: {
+            total: wiki.length,
+            categories: wikiCategories,
+            tags: wikiTags,
+            links: wikiLinks
+        },
+        distribution: {
+            checklist: checklist.length,
+            agenda: agenda.length,
+            meetings: meetingsTotal,
+            reports: reports.length,
+            wiki: wiki.length
+        },
+        total: totalRecords
+    });
+
+    updateTimestamp();
+    updateBackupStatusUI(totalRecords);
+}
+
+function updateDashboardUI(data) {
+    // Atualiza cards principais
+    updateElement('[data-stat="checklist"] .stat-number', data.checklist.total);
+    updateElement('[data-stat="checklist"] .stat-subtitle', data.checklist.completed + ' concluídas');
+
+    updateElement('[data-stat="agenda"] .stat-number', data.agenda.total);
+    updateElement('[data-stat="agenda"] .stat-subtitle', data.agenda.areas + ' áreas');
+
+    updateElement('[data-stat="meetings"] .stat-number', data.meetings.total);
+    updateElement('[data-stat="meetings"] .stat-subtitle', data.meetings.upcoming + ' próximas');
+
+    updateElement('[data-stat="reports"] .stat-number', data.reports.total);
+    updateElement('[data-stat="reports"] .stat-subtitle', data.reports.thisMonth + ' este mês');
+
+    updateElement('[data-stat="wiki"] .stat-number', data.wiki.total);
+    updateElement('[data-stat="wiki"] .stat-subtitle', data.wiki.categories + ' categorias');
+
+    updateElement('[data-stat="total"] .stat-number', data.total);
+
+    // Atualiza seção de distribuição
+    updateElement('[data-distribution="checklist"]', data.distribution.checklist);
+    updateElement('[data-distribution="agenda"]', data.distribution.agenda);
+    updateElement('[data-distribution="meetings"]', data.distribution.meetings);
+    updateElement('[data-distribution="reports"]', data.distribution.reports);
+    updateElement('[data-distribution="wiki"]', data.distribution.wiki);
+
+    // Atualiza detalhes por módulo
+    updateElement('[data-module="checklist"] [data-detail="total"]', data.checklist.total + ' tarefas');
+    updateElement('[data-module="checklist"] [data-detail="completed"]', data.checklist.completed);
+    updateElement('[data-module="checklist"] [data-detail="pending"]', data.checklist.pending);
+    updateElement('[data-module="checklist"] [data-detail="percentage"]', data.checklist.percentage + '%');
+
+    updateElement('[data-module="agenda"] [data-detail="total"]', data.agenda.total + ' atividades');
+    updateElement('[data-module="agenda"] [data-detail="areas"]', data.agenda.areas);
+    updateElement('[data-module="agenda"] [data-detail="activities"]', data.agenda.activities);
+
+    updateElement('[data-module="meetings"] [data-detail="total"]', data.meetings.total + ' reuniões');
+    updateElement('[data-module="meetings"] [data-detail="completed"]', data.meetings.completed);
+    updateElement('[data-module="meetings"] [data-detail="upcoming"]', data.meetings.upcoming);
+    updateElement('[data-module="meetings"] [data-detail="participants"]', data.meetings.participants);
+
+    updateElement('[data-module="reports"] [data-detail="total"]', data.reports.total + ' reports');
+    updateElement('[data-module="reports"] [data-detail="thisMonth"]', data.reports.thisMonth);
+    updateElement('[data-module="reports"] [data-detail="thisWeek"]', data.reports.thisWeek);
+    updateElement('[data-module="reports"] [data-detail="today"]', data.reports.today);
+
+    updateElement('[data-module="wiki"] [data-detail="total"]', data.wiki.total + ' páginas');
+    updateElement('[data-module="wiki"] [data-detail="categories"]', data.wiki.categories);
+    updateElement('[data-module="wiki"] [data-detail="tags"]', data.wiki.tags);
+    updateElement('[data-module="wiki"] [data-detail="links"]', data.wiki.links);
+}
+
+function updateTimestamp() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('pt-BR');
+    const dateString = now.toLocaleDateString('pt-BR');
+    const fullDateTime = dateString + ', ' + timeString;
+
+    updateElement('[data-timestamp="update"]', 'Atualizado em ' + fullDateTime);
+    updateElement('[data-timestamp="last"]', 'Última Atualização: ' + fullDateTime);
+}
+
+function updateBackupStatusUI(totalRecords) {
+    const lastImport = localStorage.getItem('lastBackupImport');
+    const lastImportElement = document.querySelector('[data-timestamp="lastBackupImport"]');
+    if (lastImportElement) {
+        if (lastImport) {
+            const date = new Date(lastImport);
+            lastImportElement.textContent = date.toLocaleString('pt-BR');
+        } else {
+            lastImportElement.textContent = 'Nenhuma importação realizada ainda';
+        }
+    }
+
+    const estimatedSizeKB = (totalRecords * 100 / 1024).toFixed(2);
+
+    updateElement('[data-detail="backup-total-records"]', totalRecords);
+    updateElement('[data-detail="backup-estimated-size"]', estimatedSizeKB + ' KB');
+    updateElement('[data-detail="backup-status"]', '✅ OK');
+}
+
+// Funções placeholder (mantidas)
+function loadPages() { console.log('📄 Páginas carregadas'); }
+function renderPageList() { console.log('📋 Lista de páginas renderizada'); }
+function renderBreadcrumbs() { console.log('🔗 Breadcrumbs renderizados'); }
+function checkUrlParams() { console.log('🔍 Parâmetros da URL verificados'); }
+
+// ===================================
 // INICIALIZAÇÃO DO DASHBOARD E LÓGICA DO MENU LATERAL
 // ===================================
 document.addEventListener('DOMContentLoaded', function() {
     // --- Inicialização das funções do Dashboard ---
-    // Essas funções precisam ser definidas em algum lugar (ou neste arquivo, se for o caso)
-    // Se elas não existirem, o console do navegador mostrará erros de "function is not defined".
-    if (typeof loadStatistics === 'function') loadStatistics();
-    if (typeof loadPages === 'function') loadPages();
-    if (typeof renderPageList === 'function') renderPageList();
-    if (typeof renderBreadcrumbs === 'function') renderBreadcrumbs();
-    if (typeof checkUrlParams === 'function') checkUrlParams();
+    loadStatistics(); // Chama a função principal de carregamento de estatísticas
+    loadPages();
+    renderPageList();
+    renderBreadcrumbs();
+    checkUrlParams();
 
     // Atualizar a cada 30 segundos
-    setInterval(function() {
-        if (typeof loadStatistics === 'function') loadStatistics();
-    }, 30000);
+    setInterval(loadStatistics, 30000);
 
     console.log('📈 Dashboard inicializado');
 
-    // --- Lógica do Menu Lateral (Copiada e adaptada do checklist.js) ---
+    // --- Lógica do Menu Lateral ---
     const sideMenu = document.getElementById('side-menu');
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
     const closeMenuBtn = document.getElementById('close-menu-btn');
-    const mainContent = document.getElementById('main-content'); // Usando ID, pois o style.css e checklist.js usam a classe, mas o ID é mais específico para o JS
-    let overlay = null; // Será criado dinamicamente
+    const mainContent = document.getElementById('main-content');
+    let overlay = null;
 
-    // Função para criar o overlay em mobile
     function createOverlay() {
         if (!overlay) {
             overlay = document.createElement('div');
             overlay.classList.add('overlay');
             document.body.appendChild(overlay);
-            overlay.addEventListener('click', closeMenu); // Clicar no overlay fecha o menu
+            overlay.addEventListener('click', closeMenu);
         }
     }
 
     function openMenu() {
         if (sideMenu) {
             sideMenu.classList.add('open');
-            if (menuToggleBtn) menuToggleBtn.classList.add('menu-open'); // Adiciona a classe para mover o botão
-            if (window.innerWidth > 768) { // Em telas grandes, empurra o conteúdo
+            if (menuToggleBtn) menuToggleBtn.classList.add('menu-open');
+            if (window.innerWidth > 768) {
                 if (mainContent) mainContent.style.marginLeft = sideMenu.offsetWidth + 'px';
-            } else { // Em telas pequenas, cria um overlay
-                createOverlay(); // Garante que o overlay é criado
+            } else {
+                createOverlay();
                 if (overlay) overlay.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Impede scroll do body
+                document.body.style.overflow = 'hidden';
             }
         }
     }
@@ -227,16 +427,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeMenu() {
         if (sideMenu) {
             sideMenu.classList.remove('open');
-            if (menuToggleBtn) menuToggleBtn.classList.remove('menu-open'); // Remove a classe para retornar o botão
-            if (mainContent) mainContent.style.marginLeft = '0'; // Volta o conteúdo para a posição original
+            if (menuToggleBtn) menuToggleBtn.classList.remove('menu-open');
+            if (mainContent) mainContent.style.marginLeft = '0';
             if (overlay) {
                 overlay.classList.remove('active');
-                document.body.style.overflow = ''; // Restaura scroll do body
+                document.body.style.overflow = '';
             }
         }
     }
 
-    // Event Listeners para o menu lateral
     if (menuToggleBtn) {
         menuToggleBtn.addEventListener('click', openMenu);
     }
@@ -244,23 +443,22 @@ document.addEventListener('DOMContentLoaded', function() {
         closeMenuBtn.addEventListener('click', closeMenu);
     }
 
-    // Ajusta o layout ao redimensionar a janela
     window.addEventListener('resize', () => {
-        if (sideMenu && mainContent && menuToggleBtn) { // Verifica se os elementos existem
+        if (sideMenu && mainContent && menuToggleBtn) {
             if (window.innerWidth > 768 && sideMenu.classList.contains('open')) {
                 mainContent.style.marginLeft = sideMenu.offsetWidth + 'px';
                 menuToggleBtn.classList.add('menu-open');
-                if (overlay) { // Garante que o overlay é desativado em desktop
+                if (overlay) {
                     overlay.classList.remove('active');
                     document.body.style.overflow = '';
                 }
             } else if (window.innerWidth <= 768 && sideMenu.classList.contains('open')) {
-                mainContent.style.marginLeft = '0'; // Garante que o conteúdo não seja empurrado em mobile
+                mainContent.style.marginLeft = '0';
                 menuToggleBtn.classList.remove('menu-open');
-                createOverlay(); // Garante que o overlay existe para ser ativado
+                createOverlay();
                 if (overlay) overlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
-            } else { // Se o menu estiver fechado, garante que tudo está na posição padrão
+            } else {
                 mainContent.style.marginLeft = '0';
                 menuToggleBtn.classList.remove('menu-open');
                 if (overlay) {
@@ -271,12 +469,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Inicialização para garantir que o overlay é criado se o menu for aberto em mobile
     if (window.innerWidth <= 768) {
         createOverlay();
+    } else if (sideMenu && sideMenu.classList.contains('open')) {
+        if (mainContent) mainContent.style.marginLeft = sideMenu.offsetWidth + 'px';
+        if (menuToggleBtn) menuToggleBtn.classList.add('menu-open');
     }
 
-    // Log de aviso se os elementos do menu não forem encontrados
     if (!sideMenu || !menuToggleBtn || !closeMenuBtn || !mainContent) {
         console.warn('⚠️ Elementos do menu lateral (side-menu, menu-toggle-btn, close-menu-btn, main-content) não encontrados. O menu pode não funcionar.');
     }

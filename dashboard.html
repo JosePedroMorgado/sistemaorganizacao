@@ -4,257 +4,170 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Visão Geral</title>
-    <link rel="stylesheet" href="style.css"> <!-- Seu CSS existente -->
+    <!-- Link para o arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Botão para abrir o menu lateral -->
-    <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
-
-    <!-- Menu Lateral (Sidebar) - ID e classes conforme style.css -->
     <div id="side-menu" class="side-menu">
         <div class="menu-header">
-            <h3>📋 Menu</h3>
+            <h3>Navegação</h3>
             <button id="close-menu-btn" class="close-menu-btn">X</button>
         </div>
         <nav>
             <ul>
                 <li><a href="checklist.html">✅ Checklist</a></li>
                 <li><a href="agenda.html">📅 Agenda</a></li>
-                <li><a href="reunioes.html">👥 Reuniões</a></li>
-                <li><a href="report.html">📊 Report</a></li>
+                <li><a href="relatorio.html">👥 Reuniões</a></li>
+                <li><a href="reporte.html">📊 Report</a></li>
                 <li><a href="wiki.html">📚 Wiki</a></li>
                 <li><a href="dashboard.html" class="active">📈 Dashboard</a></li>
             </ul>
         </nav>
     </div>
 
-    <!-- Conteúdo Principal do Dashboard - ID e classe conforme style.css -->
     <div id="main-content" class="main-content">
-        <header>
-            <h1>📈 Dashboard - Visão Geral</h1>
-        </header>
+        <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
 
-        <main class="main-content">
-        <!-- Seção de Backup -->
-        <section class="backup-section">
-            <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
-                📥 Exportar Dados (Backup)
-            </button>
-            <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
-                📤 Importar Dados (Restaurar)
-            </button>
-            <button id="status-btn" class="backup-btn status-btn" onclick="showBackupStatus()">
-                📊 Status do Backup
-            </button>
-        </section>
+        <h1>📈 Dashboard - Visão Geral</h1>
 
-        <!-- Cards de Estatísticas -->
-        <section class="stats-grid">
-            <div class="stat-card checklist-card">
-                <div class="stat-icon">✅</div>
+        <div class="backup-section">
+            <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">📥 Exportar Dados (Backup)</button>
+            <button id="import-btn" class="backup-btn import-btn" onclick="importData()">📤 Importar Dados (Restaurar)</button>
+            <button id="backup-btn" class="backup-btn " onclick="showBackupStatus()">📊 Status do Backup</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" data-stat="checklist">
+                <span class="stat-icon">✅</span>
                 <div class="stat-info">
-                    <h3 id="total-checklist">0</h3>
-                    <p>Tarefas no Checklist</p>
-                    <div class="stat-footer">
-                        <span id="checklist-completed">0 concluídas</span>
-                    </div>
+                    <span class="stat-number">0</span>
+                    <span class="stat-title">Tarefas no Checklist</span>
+                    <span class="stat-subtitle">0 concluídas</span>
                 </div>
             </div>
-
-            <div class="stat-card agenda-card">
-                <div class="stat-icon">📅</div>
+            <div class="stat-card" data-stat="agenda">
+                <span class="stat-icon">📅</span>
                 <div class="stat-info">
-                    <h3 id="total-agenda">1</h3>
-                    <p>Atividades na Agenda</p>
-                    <div class="stat-footer">
-                        <span id="agenda-areas">1 áreas</span>
-                    </div>
+                    <span class="stat-number">0</span>
+                    <span class="stat-title">Atividades na Agenda</span>
+                    <span class="stat-subtitle">0 áreas</span>
                 </div>
             </div>
-
-            <div class="stat-card meetings-card">
-                <div class="stat-icon">👥</div>
+            <div class="stat-card" data-stat="meetings">
+                <span class="stat-icon">👥</span>
                 <div class="stat-info">
-                    <h3 id="total-meetings">0</h3>
-                    <p>Reuniões Registradas</p>
-                    <div class="stat-footer">
-                        <span id="meetings-upcoming">0 próximas</span>
-                    </div>
+                    <span class="stat-number">0</span>
+                    <span class="stat-title">Reuniões Registradas</span>
+                    <span class="stat-subtitle">0 próximas</span>
                 </div>
             </div>
-
-            <div class="stat-card reports-card">
-                <div class="stat-icon">📊</div>
+            <div class="stat-card" data-stat="reports">
+                <span class="stat-icon">📊</span>
                 <div class="stat-info">
-                    <h3 id="total-reports">0</h3>
-                    <p>Reports Criados</p>
-                    <div class="stat-footer">
-                        <span id="reports-recent">0 este mês</span>
-                    </div>
+                    <span class="stat-number">0</span>
+                    <span class="stat-title">Reports Criados</span>
+                    <span class="stat-subtitle">0 este mês</span>
                 </div>
             </div>
-
-            <div class="stat-card wiki-card">
-                <div class="stat-icon">📚</div>
+            <div class="stat-card" data-stat="wiki">
+                <span class="stat-icon">📚</span>
                 <div class="stat-info">
-                    <h3 id="total-wiki">0</h3>
-                    <p>Páginas na Wiki</p>
-                    <div class="stat-footer">
-                        <span id="wiki-categories">0 categorias</span>
-                    </div>
+                    <span class="stat-number">0</span>
+                    <span class="stat-title">Páginas na Wiki</span>
+                    <span class="stat-subtitle">0 categorias</span>
                 </div>
             </div>
-
-            <div class="stat-card total-card">
-                <div class="stat-icon">📋</div>
+            <div class="stat-card" data-stat="total">
+                <span class="stat-icon">📋</span>
                 <div class="stat-info">
-                    <h3 id="total-all">1</h3>
-                    <p>Total de Registros</p>
-                    <div class="stat-footer">
-                        <span id="last-update">Atualizado às 23:22:57</span>
-                    </div>
+                    <span class="stat-number">0</span>
+                    <span class="stat-title">Total de Registros</span>
+                    <span class="stat-subtitle" data-timestamp="update">Atualizado às --:--:--</span>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- Gráfico de Barras (ASCII) -->
-        <section class="chart-section">
+        <section class="distribution-section">
             <h2>📊 Distribuição de Registros</h2>
-            <div class="chart-container">
-                <div class="chart-bar">
-                    <div class="chart-label">✅ Checklist</div>
-                    <div class="chart-bar-container">
-                        <div class="chart-bar-fill checklist-bar" id="bar-checklist" style="width: 0%">
-                            <span class="chart-bar-value" id="bar-checklist-value">0</span>
-                        </div>
-                    </div>
+            <div class="distribution-container">
+                <div class="distribution-item">
+                    <span class="distribution-label">✅ Checklist</span>
+                    <span class="distribution-value" data-distribution="checklist">0</span>
                 </div>
-
-                <div class="chart-bar">
-                    <div class="chart-label">📅 Agenda</div>
-                    <div class="chart-bar-container">
-                        <div class="chart-bar-fill agenda-bar" id="bar-agenda" style="width: 100%;">
-                            <span class="chart-bar-value" id="bar-agenda-value">1</span>
-                        </div>
-                    </div>
+                <div class="distribution-item">
+                    <span class="distribution-label">📅 Agenda</span>
+                    <span class="distribution-value" data-distribution="agenda">0</span>
                 </div>
-
-                <div class="chart-bar">
-                    <div class="chart-label">👥 Reuniões</div>
-                    <div class="chart-bar-container">
-                        <div class="chart-bar-fill meetings-bar" id="bar-meetings" style="width: 0%">
-                            <span class="chart-bar-value" id="bar-meetings-value">0</span>
-                        </div>
-                    </div>
+                <div class="distribution-item">
+                    <span class="distribution-label">👥 Reuniões</span>
+                    <span class="distribution-value" data-distribution="meetings">0</span>
                 </div>
-
-                <div class="chart-bar">
-                    <div class="chart-label">📊 Reports</div>
-                    <div class="chart-bar-container">
-                        <div class="chart-bar-fill reports-bar" id="bar-reports" style="width: 0%">
-                            <span class="chart-bar-value" id="bar-reports-value">0</span>
-                        </div>
-                    </div>
+                <div class="distribution-item">
+                    <span class="distribution-label">📊 Reports</span>
+                    <span class="distribution-value" data-distribution="reports">0</span>
                 </div>
-
-                <div class="chart-bar">
-                    <div class="chart-label">📚 Wiki</div>
-                    <div class="chart-bar-container">
-                        <div class="chart-bar-fill wiki-bar" id="bar-wiki" style="width: 0%">
-                            <span class="chart-bar-value" id="bar-wiki-value">0</span>
-                        </div>
-                    </div>
+                <div class="distribution-item">
+                    <span class="distribution-label">📚 Wiki</span>
+                    <span class="distribution-value" data-distribution="wiki">0</span>
                 </div>
             </div>
         </section>
 
-        <!-- Detalhes por Módulo -->
         <section class="details-section">
             <h2>📋 Detalhes por Módulo</h2>
 
-            <div class="details-grid">
-                <!-- Checklist -->
-                <div class="detail-card">
-                    <h3>✅ Checklist</h3>
-                    <div class="detail-content">
-                        <p><strong>Total:</strong> <span id="detail-checklist-total">0</span> tarefas</p>
-                        <p><strong>Concluídas:</strong> <span id="detail-checklist-completed">0</span></p>
-                        <p><strong>Pendentes:</strong> <span id="detail-checklist-pending">0</span></p>
-                        <p><strong>Taxa de conclusão:</strong> <span id="detail-checklist-rate">0%</span></p>
-                    </div>
-                </div>
+            <div class="module-details" data-module="checklist">
+                <h3>✅ Checklist</h3>
+                <p>Total: <span data-detail="total">0</span> tarefas</p>
+                <p>Concluídas: <span data-detail="completed">0</span></p>
+                <p>Pendentes: <span data-detail="pending">0</span></p>
+                <p>Taxa de conclusão: <span data-detail="percentage">0%</span></p>
+            </div>
 
-                <!-- Agenda -->
-                <div class="detail-card">
-                    <h3>📅 Agenda</h3>
-                    <div class="detail-content">
-                        <p><strong>Total:</strong> <span id="detail-agenda-total">1</span> atividades</p>
-                        <p><strong>Áreas:</strong> <span id="detail-agenda-areas">1</span></p>
-                        <p><strong>Atividades:</strong> <span id="detail-agenda-activities">1</span></p>
-                        <p><strong>Etapas:</strong> <span id="detail-agenda-stages">1</span></p>
-                    </div>
-                </div>
+            <div class="module-details" data-module="agenda">
+                <h3>📅 Agenda</h3>
+                <p>Total: <span data-detail="total">0</span> atividades</p>
+                <p>Áreas: <span data-detail="areas">0</span></p>
+                <p>Atividades: <span data-detail="activities">0</span></p>
+            </div>
 
-                <!-- Reuniões -->
-                <div class="detail-card">
-                    <h3>👥 Reuniões</h3>
-                    <div class="detail-content">
-                        <p><strong>Total:</strong> <span id="detail-meetings-total">0</span> reuniões</p>
-                        <p><strong>Realizadas:</strong> <span id="detail-meetings-past">0</span></p>
-                        <p><strong>Próximas:</strong> <span id="detail-meetings-upcoming">0</span></p>
-                        <p><strong>Participantes únicos:</strong> <span id="detail-meetings-participants">0</span></p>
-                    </div>
-                </div>
+            <div class="module-details" data-module="meetings">
+                <h3>👥 Reuniões</h3>
+                <p>Total: <span data-detail="total">0</span> reuniões</p>
+                <p>Realizadas: <span data-detail="completed">0</span></p>
+                <p>Próximas: <span data-detail="upcoming">0</span></p>
+                <p>Participantes únicos: <span data-detail="participants">0</span></p>
+            </div>
 
-                <!-- Reports -->
-                <div class="detail-card">
-                    <h3>📊 Reports</h3>
-                    <div class="detail-content">
-                        <p><strong>Total:</strong> <span id="detail-reports-total">0</span> reports</p>
-                        <p><strong>Este mês:</strong> <span id="detail-reports-month">0</span></p>
-                        <p><strong>Esta semana:</strong> <span id="detail-reports-week">0</span></p>
-                        <p><strong>Hoje:</strong> <span id="detail-reports-today">0</span></p>
-                    </div>
-                </div>
+            <div class="module-details" data-module="reports">
+                <h3>📊 Reports</h3>
+                <p>Total: <span data-detail="total">0</span> reports</p>
+                <p>Este mês: <span data-detail="thisMonth">0</span></p>
+                <p>Esta semana: <span data-detail="thisWeek">0</span></p>
+                <p>Hoje: <span data-detail="today">0</span></p>
+            </div>
 
-                <!-- Wiki -->
-                <div class="detail-card">
-                    <h3>📚 Wiki</h3>
-                    <div class="detail-content">
-                        <p><strong>Total:</strong> <span id="detail-wiki-total">0</span> páginas</p>
-                        <p><strong>Categorias:</strong> <span id="detail-wiki-categories">0</span></p>
-                        <p><strong>Tags únicas:</strong> <span id="detail-wiki-tags">0</span></p>
-                        <p><strong>Links internos:</strong> <span id="detail-wiki-links">0</span></p>
-                    </div>
-                </div>
-
-                <!-- Backup -->
-                <div class="detail-card">
-                    <h3>💾 Backup</h3>
-                    <div class="detail-content">
-                        <p><strong>Última importação:</strong> <span id="detail-backup-import">04/02/2026, 23:02:17</span></p>
-                        <p><strong>Total de registros:</strong> <span id="detail-backup-total">1</span></p>
-                        <p><strong>Tamanho estimado:</strong> <span id="detail-backup-size">0 KB</span></p>
-                        <p><strong>Status:</strong> <span id="detail-backup-status">✅ OK</span></p>
-                    </div>
-                </div>
+            <div class="module-details" data-module="wiki">
+                <h3>📚 Wiki</h3>
+                <p>Total: <span data-detail="total">0</span> páginas</p>
+                <p>Categorias: <span data-detail="categories">0</span></p>
+                <p>Tags únicas: <span data-detail="tags">0</span></p>
+                <p>Links internos: <span data-detail="links">0</span></p>
             </div>
         </section>
 
-        <!-- Atividade Recente -->
-        <section class="recent-section">
-            <h2>🕒 Última Atualização</h2>
-            <div class="recent-content">
-                <p id="last-activity">Dashboard atualizado em 04/02/2026, 23:22:57</p>
-            </div>
+        <section class="detail-content">
+            <h2>💾 Backup</h2>
+            <p>Última importação: <span data-timestamp="lastBackupImport">Nenhuma importação realizada ainda</span></p>
+            <p>Total de registros: <span data-detail="backup-total-records">0</span></p>
+            <p>Tamanho estimado: <span data-detail="backup-estimated-size">0 KB</span></p>
+            <p>Status: <span data-detail="backup-status">N/A</span></p>
         </section>
-    </main>
-        <footer>
-            <p>🕒 Última Atualização: Carregando...</p>
-        </footer>
     </div>
 
+    <!-- Link para o arquivo JavaScript -->
     <script src="dashboard.js"></script>
 </body>
 </html>
+
