@@ -39,16 +39,18 @@
                 <h1>📚 Wiki Interna</h1>
             </header>
 
+        <!-- Seção de Backup/Restauração -->
+        <section class="backup-section">
+            <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
+                📥 Exportar Dados (Backup)
+            </button>
+            <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
+                📤 Importar Dados (Restaurar)
+            </button>
+        </section>
+
             <main>
-                <!-- Seção de Backup -->
-                <section class="backup-section">
-                    <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">
-                        📥 Exportar Dados (Backup)
-                    </button>
-                    <button id="import-btn" class="backup-btn import-btn" onclick="importData()">
-                        📤 Importar Dados (Restaurar)
-                    </button>
-                </section>
+
 
                 <!-- Barra de Ações -->
                 <section class="actions-bar">
@@ -87,7 +89,7 @@
             </main>
 
             <footer>
-                <p>&copy; 2026 Wiki Interna. Todos os direitos reservados.</p>
+                <p>&copy; 2026 Wiki Interna. Desenvolvido por JOSE.</p>
             </footer>
         </div>
     </div>

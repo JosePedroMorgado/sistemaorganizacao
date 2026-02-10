@@ -129,6 +129,8 @@ function importData() {
                     }
                     currentMeetingsApp.meetings = importedData.data.meetings;
                     localStorage.setItem('meetingsAppData', JSON.stringify(currentMeetingsApp));
+                    // Também atualiza a chave direta se ela for usada em outros lugares
+                    localStorage.setItem('meetingsApp.meetings', JSON.stringify(importedData.data.meetings));
                 }
                 if (importedData.data.reports) {
                     localStorage.setItem('reports', JSON.stringify(importedData.data.reports));
@@ -177,14 +179,13 @@ function showBackupStatus() {
         message += '⚠️ Nenhuma importação realizada ainda\n';
     }
 
-    // ATENÇÃO: Aqui, estamos lendo o objeto meetingsApp completo, se ele existir.
-    const meetingsFromApp = JSON.parse(localStorage.getItem('meetingsAppData') || 'null');
-    const actualMeetingsArray = meetingsFromApp && meetingsFromApp.meetings ? meetingsFromApp.meetings : [];
+    // ATENÇÃO: Aqui, estamos lendo o array de reuniões diretamente de 'meetingsApp.meetings'
+    const actualMeetingsArray = JSON.parse(localStorage.getItem('meetingsApp.meetings') || '[]');
 
     const allData = {
         checklist: JSON.parse(localStorage.getItem('checklistTasks') || '[]'),
         agendaActivities: JSON.parse(localStorage.getItem('agendaActivities') || '[]'),
-        meetings: actualMeetingsArray, // Usando o array de reuniões de meetingsApp
+        meetings: actualMeetingsArray, // Usando o array de reuniões de meetingsApp.meetings
         reports: JSON.parse(localStorage.getItem('reports') || '[]'),
         wiki: JSON.parse(localStorage.getItem('wiki') || '[]')
     };
@@ -206,9 +207,8 @@ function loadStatistics() {
     const checklist = JSON.parse(localStorage.getItem('checklistTasks') || '[]');
     const agenda = JSON.parse(localStorage.getItem('agendaActivities') || '[]');
 
-    // ATENÇÃO: AQUI ESTÁ A MUDANÇA PRINCIPAL PARA LER meetingsApp.meetings
-    const meetingsFromApp = JSON.parse(localStorage.getItem('meetingsAppData') || 'null');
-    const meetings = meetingsFromApp && meetingsFromApp.meetings ? meetingsFromApp.meetings : [];
+    // Lendo diretamente da chave 'meetingsApp.meetings'
+    const meetings = JSON.parse(localStorage.getItem('meetingsApp.meetings') || '[]');
 
     const reports = JSON.parse(localStorage.getItem('reports') || '[]');
     const wiki = JSON.parse(localStorage.getItem('wiki') || '[]');
@@ -220,7 +220,21 @@ function loadStatistics() {
     const agendaAreas = new Set(agenda.map(function(activity) { return activity.area; })).size;
 
     const meetingsTotal = meetings.length;
-    const meetingsCompleted = meetings.filter(function(m) { return m.status === 'realizada' || m.status === 'completed'; }).length;
+
+    // --- NOVAS CONTADORAS DE STATUS DE REUNIÕES ---
+    const meetingsCompleted = meetings.filter(function(m) {
+        return m.status === 'Concluído';
+    }).length;
+
+    const meetingsPending = meetings.filter(function(m) {
+        return m.status === 'Pendente';
+    }).length;
+
+    const meetingsNotRealized = meetings.filter(function(m) {
+        return m.status === 'Não Realizado';
+    }).length;
+    // --- FIM DAS NOVAS CONTADORAS ---
+
     const meetingsUpcoming = meetings.filter(function(m) { return m.status === 'próxima' || m.status === 'upcoming'; }).length;
     const uniqueParticipants = new Set(meetings.flatMap(function(m) { return m.participants || []; })).size;
 
@@ -262,6 +276,8 @@ function loadStatistics() {
         meetings: {
             total: meetingsTotal,
             completed: meetingsCompleted,
+            pending: meetingsPending,      // Adicionado
+            notRealized: meetingsNotRealized, // Adicionado
             upcoming: meetingsUpcoming,
             participants: uniqueParticipants
         },
@@ -327,10 +343,14 @@ function updateDashboardUI(data) {
     updateElement('[data-module="agenda"] [data-detail="areas"]', data.agenda.areas);
     updateElement('[data-module="agenda"] [data-detail="activities"]', data.agenda.activities);
 
+    // --- ATUALIZAÇÃO DOS DETALHES DE REUNIÕES ---
     updateElement('[data-module="meetings"] [data-detail="total"]', data.meetings.total + ' reuniões');
     updateElement('[data-module="meetings"] [data-detail="completed"]', data.meetings.completed);
-    updateElement('[data-module="meetings"] [data-detail="upcoming"]', data.meetings.upcoming);
+    updateElement('[data-module="meetings"] [data-detail="pending"]', data.meetings.pending); // Adicionado
+    updateElement('[data-module="meetings"] [data-detail="notRealized"]', data.meetings.notRealized); // Adicionado
+    updateElement('[data-module="meetings"] [data-detail="upcoming"]', data.meetings.upcoming); // Mantido, se quiser exibir
     updateElement('[data-module="meetings"] [data-detail="participants"]', data.meetings.participants);
+    // --- FIM DA ATUALIZAÇÃO DOS DETALHES DE REUNIÕES ---
 
     updateElement('[data-module="reports"] [data-detail="total"]', data.reports.total + ' reports');
     updateElement('[data-module="reports"] [data-detail="thisMonth"]', data.reports.thisMonth);

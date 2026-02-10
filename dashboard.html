@@ -29,8 +29,11 @@
     <div id="main-content" class="main-content">
         <button id="menu-toggle-btn" class="menu-toggle-btn">☰</button>
 
-        <h1>📈 Dashboard - Visão Geral</h1>
-
+        <div class="main-content">
+            <header>
+                <h1>📈 Dashboard - Visão Geral</h1>
+            </header>
+        
         <div class="backup-section">
             <button id="export-btn" class="backup-btn export-btn" onclick="exportData()">📥 Exportar Dados (Backup)</button>
             <button id="import-btn" class="backup-btn import-btn" onclick="importData()">📤 Importar Dados (Restaurar)</button>
@@ -134,8 +137,10 @@
 
             <div class="module-details" data-module="meetings">
                 <h3>👥 Reuniões</h3>
-                <p>Total: <span data-detail="total">0</span> reuniões</p>
-                <p>Realizadas: <span data-detail="completed">0</span></p>
+                <p>Total: <span data-detail="total">0 reuniões</span></p>
+                <p>Concluídas: <span data-detail="completed">0</span></p>
+                <p>Pendentes: <span data-detail="pending">0</span></p>
+                <p>Não realizadas: <span data-detail="notRealized">0</span></p>
                 <p>Próximas: <span data-detail="upcoming">0</span></p>
                 <p>Participantes únicos: <span data-detail="participants">0</span></p>
             </div>
@@ -157,7 +162,7 @@
             </div>
         </section>
 
-        <section class="detail-content">
+        <section class="detail-section">
             <h2>💾 Backup</h2>
             <p>Última importação: <span data-timestamp="lastBackupImport">Nenhuma importação realizada ainda</span></p>
             <p>Total de registros: <span data-detail="backup-total-records">0</span></p>
@@ -165,6 +170,10 @@
             <p>Status: <span data-detail="backup-status">N/A</span></p>
         </section>
     </div>
+
+            <footer>
+                <p>&copy; 2026 Dashboard - Visão Geral. Desenvolvido por JOSE.</p>
+            </footer>
 
     <!-- Link para o arquivo JavaScript -->
     <script src="dashboard.js"></script>
