@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addNewArea() {
-        const newArea = prompt('Digite o nome da nova área:').trim();
+        const newArea = (prompt('Digite o nome da nova área:') || '').trim();
         if (newArea && !areas.includes(newArea)) {
             areas.push(newArea);
             areas.sort(); // Mantém as áreas em ordem alfabética
@@ -411,56 +411,175 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-function openMeetingModal() {
-    meetingModal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
+    function openMeetingModal() {
+        meetingModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 
-function closeMeetingModal() {
-    meetingModal.classList.add('hidden');
-    document.body.style.overflow = '';
-}
+    function closeMeetingModal() {
+        meetingModal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
 
-function escapeHtml(str) {
-    return String(str ?? '')
-        .replaceAll('&', '&')
-        .replaceAll('<', '<')
-        .replaceAll('>', '>')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-}
+    function escapeHtml(str) {
+        return String(str ?? '')
+            .replaceAll('&', '&')
+            .replaceAll('<', '<')
+            .replaceAll('>', '>')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
 
-function viewMeeting(id) {
-    const meeting = meetings.find(m => m.id === id);
-    if (!meeting) return;
+    function viewMeeting(id) {
+        const meeting = meetings.find(m => m.id === id);
+        if (!meeting) return;
 
-    const fields = [
-        { label: 'ID', value: meeting.id },
-        { label: 'Data', value: formatDateToBR(meeting.date) },
-        { label: 'Horário', value: meeting.time },
-        { label: 'Título', value: meeting.title },
-        { label: 'Assunto', value: meeting.subject },
-        { label: 'Participantes', value: meeting.participants },
-        { label: 'Área', value: meeting.area },
-        { label: 'Local', value: meeting.local },
-        { label: 'Status', value: meeting.status },
-        { label: 'Observações', value: meeting.observations, fullWidth: true },
-        { label: 'Próximos Passos', value: meeting.nextSteps, fullWidth: true },
-    ];
+        const fields = [
+            { label: 'ID', value: meeting.id },
+            { label: 'Data', value: formatDateToBR(meeting.date) },
+            { label: 'Horário', value: meeting.time },
+            { label: 'Título', value: meeting.title },
+            { label: 'Assunto', value: meeting.subject },
+            { label: 'Participantes', value: meeting.participants },
+            { label: 'Área', value: meeting.area },
+            { label: 'Local', value: meeting.local },
+            { label: 'Status', value: meeting.status },
+            { label: 'Observações', value: meeting.observations, fullWidth: true },
+            { label: 'Próximos Passos', value: meeting.nextSteps, fullWidth: true },
+        ];
 
-    meetingModalBody.innerHTML = fields.map(f => {
-        const safeValue = escapeHtml(f.value).replace(/\n/g, '<br>');
-        return `
-            <div class="meeting-modal__field ${f.fullWidth ? 'full-width' : ''}">
-              <strong>${escapeHtml(f.label)}</strong>
-              <div>${safeValue || '-'}</div>
-            </div>
-        `;
-    }).join('');
+        meetingModalBody.innerHTML = fields.map(f => {
+            const safeValue = escapeHtml(f.value).replace(/\n/g, '<br>');
+            return `
+                <div class="meeting-modal__field ${f.fullWidth ? 'full-width' : ''}">
+                  <strong>${escapeHtml(f.label)}</strong>
+                  <div>${safeValue || '-'}</div>
+                </div>
+            `;
+        }).join('');
 
-    openMeetingModal();
-}
+        openMeetingModal();
+    }
 
+    // ---------- Início: Export / Import Backup ----------
+    // Busca elementos pelo texto visível no HTML para não alterar estilo/estrutura
+    const EXPORT_TEXT = '📥 Exportar Dados (Backup)';
+    const IMPORT_TEXT = '📤 Importar Dados (Restaurar)';
+    const IMPORT_FILE_INPUT_ID = 'import-backup-file-hidden';
+
+    function findElementByExactText(text) {
+        const candidates = Array.from(document.querySelectorAll('button, a, span, div, p, li'));
+        return candidates.find(el => (el.textContent || '').trim() === text.trim()) || null;
+    }
+
+    function ensureHiddenFileInput() {
+        let input = document.getElementById(IMPORT_FILE_INPUT_ID);
+        if (!input) {
+            input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,application/json';
+            input.id = IMPORT_FILE_INPUT_ID;
+            input.style.display = 'none';
+            document.body.appendChild(input);
+        }
+        return input;
+    }
+
+    function exportBackup() {
+        try {
+            const meetingsData = Array.isArray(meetings) ? meetings : [];
+            const areasData = Array.isArray(areas) ? areas : [];
+            const payload = { meetings: meetingsData, areas: areasData };
+            const json = JSON.stringify(payload, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const datePart = new Date().toISOString().slice(0,10);
+            a.download = `meetings-backup-${datePart}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Erro ao exportar backup:', err);
+            alert('Falha ao exportar backup. Veja console para detalhes.');
+        }
+    }
+
+    function importBackupFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                if (!parsed || typeof parsed !== 'object') throw new Error('Arquivo inválido');
+
+                if (parsed.meetings && Array.isArray(parsed.meetings)) {
+                    meetings = parsed.meetings;
+                }
+
+                if (parsed.areas && Array.isArray(parsed.areas)) {
+                    areas = parsed.areas;
+                }
+
+                // Salva usando funções existentes
+                if (typeof saveMeetings === 'function') {
+                    saveMeetings();
+                } else {
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(meetings));
+                }
+
+                if (typeof saveAreas === 'function') {
+                    saveAreas();
+                } else {
+                    localStorage.setItem(LOCAL_STORAGE_AREAS_KEY, JSON.stringify(areas));
+                }
+
+                // Atualiza UI
+                populateAreaSelects();
+                renderMeetings();
+                if (typeof updateCalendar === 'function') updateCalendar();
+
+                alert('Backup importado com sucesso.');
+            } catch (err) {
+                console.error('Erro ao importar backup:', err);
+                alert('Falha ao importar backup: arquivo inválido. Veja console para detalhes.');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Conecta os elementos (procura pelo texto)
+    const exportEl = findElementByExactText(EXPORT_TEXT);
+    const importEl = findElementByExactText(IMPORT_TEXT);
+    const hiddenFileInput = ensureHiddenFileInput();
+
+    if (exportEl) {
+        exportEl.style.cursor = 'pointer';
+        exportEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            exportBackup();
+        });
+    } else {
+        console.warn('Elemento de exportação não encontrado. Se desejar, adicione um elemento com texto exato:', EXPORT_TEXT);
+    }
+
+    if (importEl) {
+        importEl.style.cursor = 'pointer';
+        importEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            hiddenFileInput.click();
+        });
+        hiddenFileInput.addEventListener('change', (ev) => {
+            const file = ev.target.files[0];
+            importBackupFile(file);
+            ev.target.value = ''; // limpa seleção
+        });
+    } else {
+        console.warn('Elemento de importação não encontrado. Se desejar, adicione um elemento com texto exato:', IMPORT_TEXT);
+    }
+    // ---------- Fim: Export / Import Backup ----------
 
     // --- Event Listeners ---
     meetingForm.addEventListener('submit', (event) => {
@@ -576,4 +695,3 @@ function viewMeeting(id) {
     initializeCalendar(); // Inicializa o calendário
     renderMeetings(); // Renderiza a tabela e atualiza o calendário
 });
-

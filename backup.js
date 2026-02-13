@@ -10,7 +10,7 @@ function exportData() {
         data: {
             checklist: JSON.parse(localStorage.getItem('checklist') || '[]'),
             agendaActivities: JSON.parse(localStorage.getItem('agendaActivities') || '[]'),
-            meetings: JSON.parse(localStorage.getItem('meetings') || '[]'),
+            meetings: JSON.parse(localStorage.getItem('meetingsApp.meetings') || '[]'),
             reports: JSON.parse(localStorage.getItem('reports') || '[]'),
             wiki: JSON.parse(localStorage.getItem('wiki') || '[]')
         }
@@ -34,7 +34,7 @@ function exportData() {
     alert('Backup completo exportado com sucesso!\n\nDados exportados:\n' +
           '✅ Checklist: ' + allData.data.checklist.length + ' itens\n' +
           '✅ Agenda: ' + allData.data.agendaActivities.length + ' atividades\n' +
-          '✅ Reuniões: ' + allData.data.meetings.length + ' reuniões\n' +
+          '✅ Reuniões: ' + allData.data.meetingsApp.meetings.length + ' reuniões\n' +
           '✅ Reports: ' + allData.data.reports.length + ' reports\n' +
           '✅ Wiki: ' + allData.data.wiki.length + ' páginas');
 }
@@ -63,7 +63,7 @@ function importData() {
                     'Dados que serão importados:\n' +
                     '✅ Checklist: ' + (importedData.data.checklist ? importedData.data.checklist.length : 0) + ' itens\n' +
                     '✅ Agenda: ' + (importedData.data.agendaActivities ? importedData.data.agendaActivities.length : 0) + ' atividades\n' +
-                    '✅ Reuniões: ' + (importedData.data.meetings ? importedData.data.meetings.length : 0) + ' reuniões\n' +
+                    '✅ Reuniões: ' + (importedData.data.meetingsApp.meetings ? importedData.data.meetingsApp.meetings.length : 0) + ' reuniões\n' +
                     '✅ Reports: ' + (importedData.data.reports ? importedData.data.reports.length : 0) + ' reports\n' +
                     '✅ Wiki: ' + (importedData.data.wiki ? importedData.data.wiki.length : 0) + ' páginas\n\n' +
                     'Deseja continuar?';
