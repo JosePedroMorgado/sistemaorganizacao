@@ -10,10 +10,10 @@ body {
 }
 
 /* Container principal da aplicação para layout flexível */
-.app-container {
+.container { /* Renomeado de .app-container para .container para corresponder ao HTML */
     display: flex;
     min-height: 100vh; /* Garante que o container ocupe toda a altura da viewport */
-    flex-direction: column; /* Organiza os itens (menu, main-content) em coluna */
+    /* flex-direction: column; Removido, pois o main-content já é flex column */
 }
 
 /* Menu Lateral */
@@ -38,17 +38,13 @@ body {
     transform: translateX(0); /* Mostra o menu */
 }
 
-.menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+/* Removido .menu-header, pois o HTML não o usa diretamente */
+
+.side-menu h3 { /* Ajustado para o h3 direto */
+    margin: 0;
+    margin-bottom: 30px; /* Adicionado margem inferior */
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.menu-header h3 {
-    margin: 0;
     color: #ffffff;
     font-size: 1.4rem;
 }
@@ -61,6 +57,9 @@ body {
     cursor: pointer;
     padding: 5px;
     line-height: 1;
+    position: absolute; /* Posiciona o botão de fechar */
+    top: 20px;
+    right: 20px;
 }
 
 .close-menu-btn:hover {
@@ -146,38 +145,35 @@ body {
 /* Conteúdo principal da aplicação */
 .main-content {
     flex-grow: 1; /* Ocupa o espaço restante */
-    padding-left: 0; /* Sem padding inicial, ajustado pelo JS */
+    padding: 20px; /* Padding geral para o conteúdo */
+    margin-left: 0; /* Sem padding inicial, ajustado pelo JS */
     transition: margin-left 0.3s ease-in-out;
     width: 100%; /* Garante que ocupe a largura total quando o menu está fechado */
     display: flex; /* Adicionado para flexbox */
     flex-direction: column; /* Organiza header, main e footer em coluna */
 }
 
-/* Header do conteúdo principal */
-.main-content header {
-    background-color: #093962; /* Cor da fonte preferida do usuário */
-    color: #ffffff;
-    padding: 20px 0;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+/* Removido .main-content header, pois o HTML não o usa diretamente */
 
-h1, h2 {
+h1 { /* Ajustado para o h1 direto */
     color: #093962;
     text-align: center;
     margin-bottom: 20px;
+    border-bottom: 2px solid #007bff; /* Adicionado borda para destaque */
+    padding-bottom: 10px;
 }
 
-/* Main do conteúdo principal */
-.main-content main {
-    flex-grow: 1; /* Faz o main ocupar o máximo de espaço possível */
-    max-width: 900px; /* Largura para o checklist */
-    margin: 20px auto;
-    padding: 0 20px;
+h2 { /* Ajustado para o h2 direto */
+    color: #093962;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 15px;
 }
+
+/* Removido .main-content main, pois o HTML não o usa diretamente */
 
 /* Footer do conteúdo principal */
-.main-content footer {
+.main-content footer { /* Ajustado para o footer direto */
     margin-top: auto; /* Empurra o footer para o final do main-content */
     background-color: #093962;
     color: #ffffff;
@@ -223,7 +219,7 @@ h1, h2 {
     margin-top: 20px;
 }
 
-.form-actions button {
+.btn-primary, .btn-secondary { /* Unificado estilos de botões do formulário */
     background-color: #28a745;
     color: #ffffff;
     border: none;
@@ -234,12 +230,20 @@ h1, h2 {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.form-actions button:hover {
+.btn-primary:hover, .btn-secondary:hover {
     background-color: #218838;
     transform: translateY(-2px);
 }
 
-#cancel-edit-btn {
+.btn-secondary { /* Estilo específico para o botão secundário */
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+#cancel-edit-btn { /* Mantido para especificidade se necessário */
     background-color: #dc3545;
 }
 
@@ -248,26 +252,23 @@ h1, h2 {
 }
 
 /* Estilos para a seção do checklist */
-.checklist-section {
+.task-list-section { /* Renomeado de .checklist-section para .task-list-section */
     background-color: #ffffff;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 900px; /* Limita a largura da lista */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.filters-and-actions {
+.filters { /* Mantido como está no HTML */
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; /* Alinha os filtros à esquerda */
     align-items: center;
     margin-bottom: 20px;
     flex-wrap: wrap; /* Permite quebra de linha em telas pequenas */
     gap: 10px;
-}
-
-.filters {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
 }
 
 .filter-btn {
@@ -290,7 +291,7 @@ h1, h2 {
     font-weight: bold;
 }
 
-.clear-btn {
+.btn-danger { /* Usando a classe btn-danger para o botão de limpar */
     background-color: #dc3545;
     color: #ffffff;
     border: none;
@@ -299,141 +300,131 @@ h1, h2 {
     cursor: pointer;
     font-size: 0.9rem;
     transition: background-color 0.3s ease;
+    margin-left: auto; /* Empurra o botão de limpar para a direita */
 }
 
-.clear-btn:hover {
+.btn-danger:hover {
     background-color: #c82333;
 }
 
-/* Estilos para a lista de tarefas */
-#task-list {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-    /* Removido background-color e box-shadow daqui para evitar duplicação com .checklist-section */
+/* Removido #task-list li e .task-content, .task-actions, .custom-checkbox */
+/* Essas regras não são mais necessárias com a estrutura de cards */
+
+/* ===================================
+   ESTILOS PARA CARDS DE TAREFAS
+   =================================== */
+
+.task-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsivo */
+    gap: 20px;
+    margin-top: 20px;
+    padding: 0; /* Garante que não haja padding extra */
 }
 
-#task-list li {
+.task-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* ALINHAMENTO CRÍTICO: Alinha itens ao topo */
-    padding: 15px 0; /* Ajustado padding para não ter padding lateral extra */
-    border-bottom: 1px solid #eee;
-    gap: 15px; /* Espaçamento entre o conteúdo e as ações */
+    flex-direction: column; /* Texto em cima, botões embaixo */
+    justify-content: space-between; /* Empurra botões para o final */
+    min-height: 120px; /* Altura mínima para cards */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-left 0.2s ease;
+    border-left: 5px solid #3498db; /* Cor para tarefas pendentes */
 }
 
-#task-list li:last-child {
-    border-bottom: none;
+.task-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.task-content {
-    display: flex;
-    align-items: flex-start; /* Alinha o checkbox e o texto ao topo */
-    flex-grow: 1;
-    gap: 10px;
-    cursor: pointer;
-    /* Correções para quebra de linha */
-    white-space: normal; /* Permite quebra de linha normal */
-    word-wrap: break-word; /* Força a quebra de palavras longas */
-    overflow-wrap: break-word; /* Propriedade mais moderna para quebra de palavras */
-    min-width: 0; /* Permite que o flex item encolha */
+.task-card.completed {
+    border-left: 5px solid #28a745; /* Cor para tarefas concluídas */
+    opacity: 0.9;
 }
 
-/* Checkbox customizado */
-.custom-checkbox {
-    display: inline-block;
-    position: relative;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #007bff;
-    border-radius: 4px;
-    cursor: pointer;
-    flex-shrink: 0; /* Impede que o checkbox encolha */
-    margin-top: 2px; /* Pequeno ajuste para alinhar com o texto */
-}
-
-.custom-checkbox.checked {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-.custom-checkbox.checked::after {
-    content: '';
-    position: absolute;
-    left: 6px;
-    top: 2px;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
-}
-
-.task-text {
-    flex-grow: 1;
-    font-size: 1.1rem;
+.task-card-text {
+    font-size: 1.1em;
+    margin-bottom: 15px; /* Espaço entre o texto e os botões */
+    word-wrap: break-word;
+    flex-grow: 1; /* Faz o texto ocupar o espaço disponível */
     color: #333;
-    /* Correções para quebra de linha */
-    white-space: normal; /* Permite quebra de linha normal */
-    word-wrap: break-word; /* Força a quebra de palavras longas */
-    overflow-wrap: break-word; /* Propriedade mais moderna para quebra de palavras */
-    min-width: 0; /* Permite que o texto encolha dentro do flex item */
 }
 
-.task-text.completed {
+.task-card-text.completed {
     text-decoration: line-through;
     color: #888;
 }
 
-.task-actions {
+.task-card-actions {
     display: flex;
-    flex-direction: column; /* Empilha os botões verticalmente */
-    gap: 5px; /* Espaçamento entre os botões */
-    flex-shrink: 0; /* Impede que os botões encolham */
-    align-items: stretch; /* Faz os botões se esticarem para preencher a largura */
-    min-width: 100px; /* Largura mínima para os botões */
+    justify-content: flex-end; /* Alinha os botões à direita */
+    gap: 8px;
+    margin-top: auto; /* Empurra as ações para o rodapé do card */
 }
 
-.task-actions button {
-    padding: 8px 10px;
-    font-size: 0.9rem;
+.action-btn {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
     border-radius: 4px;
-    transition: background-color 0.2s ease;
-    width: 100%; /* Ocupa a largura total do container */
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.task-actions .edit-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
+.action-btn i {
+    pointer-events: none; /* Garante que o clique seja no botão, não no ícone */
 }
 
-.task-actions .edit-btn:hover {
-    background-color: #0056b3;
+/* Estilos para os botões de status (positivo/negativo) */
+.toggle-status-btn {
+    color: #28a745; /* Cor para o ícone de positivo (concluir) */
+}
+.toggle-status-btn:hover {
+    background-color: #e6ffe6;
+    color: #218838;
+}
+.task-card.completed .toggle-status-btn {
+    color: #dc3545; /* Cor para o ícone de negativo (desfazer) */
+}
+.task-card.completed .toggle-status-btn:hover {
+    background-color: #ffe6e6;
+    color: #c82333;
 }
 
-.task-actions .delete-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
+/* Estilos para os botões de Editar e Excluir */
+.edit-btn {
+    color: #007bff;
+}
+.edit-btn:hover {
+    background-color: #e6f2ff;
+    color: #0056b3;
 }
 
-.task-actions .delete-btn:hover {
-    background-color: #c82333;
+.delete-btn {
+    color: #dc3545;
+}
+.delete-btn:hover {
+    background-color: #ffe6e6;
+    color: #c82333;
 }
 
-#empty-list-message {
+.empty-message {
     text-align: center;
-    color: #666;
-    margin-top: 30px;
+    color: #6c757d;
     font-style: italic;
+    margin-top: 30px;
+    font-size: 1.1em;
 }
 
 /* ===================================
-   ESTILOS PARA BOTÕES DE BACKUP
+   ESTILOS PARA BOTÕES DE BACKUP (data-actions)
    =================================== */
 
-.backup-section {
+.data-actions { /* Renomeado de .backup-section para .data-actions */
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -443,9 +434,12 @@ h1, h2 {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border: 2px dashed #6c757d;
+    max-width: 900px; /* Limita a largura */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.backup-btn {
+.btn-export, .btn-import { /* Unificado estilos de botões de exportar/importar */
     background-color: #6c757d;
     color: #ffffff;
     padding: 12px 25px;
@@ -459,26 +453,67 @@ h1, h2 {
     font-weight: bold;
 }
 
-.backup-btn:hover {
+.btn-export:hover, .btn-import:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.export-btn {
+.btn-export { /* Estilo específico para exportar */
     background-color: #17a2b8; /* Azul ciano */
 }
 
-.export-btn:hover {
+.btn-export:hover {
     background-color: #138496;
 }
 
-.import-btn {
+.btn-import { /* Estilo específico para importar */
     background-color: #ffc107; /* Amarelo/laranja */
     color: #000000;
 }
 
-.import-btn:hover {
+.btn-import:hover {
     background-color: #e0a800;
+}
+
+/* ===================================
+   NOVOS ESTILOS DE STATUS E BOTÕES
+   =================================== */
+
+/* Card para tarefas Não Realizadas */
+.task-card.negative {
+    border-left: 5px solid #dc3545; /* Vermelho */
+    background-color: #fffafb;
+    opacity: 0.9;
+}
+
+/* Riscado também para tarefas não realizadas */
+.task-card-text.completed, 
+.task-card-text.negative {
+    text-decoration: line-through;
+    color: #888;
+}
+
+/* Cores específicas dos botões de ação */
+.complete-btn {
+    color: #28a745; /* Verde */
+}
+.complete-btn:hover {
+    background-color: #e6ffe6;
+}
+
+.negative-btn {
+    color: #dc3545; /* Vermelho */
+}
+.negative-btn:hover {
+    background-color: #ffe6e6;
+}
+
+.undo-btn {
+    color: #ffc107; /* Amarelo */
+}
+.undo-btn:hover {
+    background-color: #fff8e6;
+    color: #d39e00;
 }
 
 /* Responsividade */
@@ -505,14 +540,13 @@ h1, h2 {
     /* Conteúdo principal em telas pequenas */
     .main-content {
         margin-left: 0 !important; /* Garante que o conteúdo não seja empurrado */
+        padding: 15px; /* Ajusta padding para telas menores */
     }
 
-    .main-content main {
-        padding: 0 15px;
-    }
-
-    .add-task-section, .checklist-section {
+    .task-form-section.card, .task-list-section, .data-actions {
         padding: 20px;
+        margin-left: 0;
+        margin-right: 0;
     }
 
     .form-actions {
@@ -520,50 +554,38 @@ h1, h2 {
         gap: 10px;
     }
 
-    .filters-and-actions {
+    .filters {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .filters {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .filter-btn, .clear-btn {
+    .filter-btn, .btn-danger { /* Aplica a ambos os botões de filtro e limpar */
         flex-grow: 1;
+        width: 100%; /* Ocupa a largura total */
+        margin-left: 0; /* Remove margem extra */
     }
 
-    #task-list li {
-        flex-direction: column; /* Empilha conteúdo e ações verticalmente */
-        align-items: stretch; /* Estica para preencher a largura */
-        gap: 10px;
+    .task-cards-container {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
     }
 
-    .task-content {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .task-actions {
-        width: 100%;
+    .task-card-actions {
         flex-direction: row; /* Botões de ação lado a lado em mobile */
         justify-content: center;
         gap: 10px;
-        min-width: unset; /* Remove largura mínima */
     }
 
-    .task-actions button {
+    .action-btn {
         flex-grow: 1; /* Faz os botões se esticarem */
-        max-width: 48%; /* Limita a largura para dois botões por linha */
+        max-width: 30%; /* Limita a largura para 3 botões por linha */
     }
 
-    .backup-section {
+    .data-actions {
         flex-direction: column;
         gap: 10px;
     }
 
-    .backup-btn {
+    .btn-export, .btn-import {
         max-width: 100%;
     }
 }

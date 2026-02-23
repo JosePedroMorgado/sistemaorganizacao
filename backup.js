@@ -34,7 +34,7 @@ function exportData() {
     alert('Backup completo exportado com sucesso!\n\nDados exportados:\n' +
           '✅ Checklist: ' + allData.data.checklist.length + ' itens\n' +
           '✅ Agenda: ' + allData.data.agendaActivities.length + ' atividades\n' +
-          '✅ Reuniões: ' + allData.data.meetingsApp.meetings.length + ' reuniões\n' +
+          '✅ Reuniões: ' + allData.data.meetings.length + ' reuniões\n' +
           '✅ Reports: ' + allData.data.reports.length + ' reports\n' +
           '✅ Wiki: ' + allData.data.wiki.length + ' páginas');
 }
@@ -63,7 +63,7 @@ function importData() {
                     'Dados que serão importados:\n' +
                     '✅ Checklist: ' + (importedData.data.checklist ? importedData.data.checklist.length : 0) + ' itens\n' +
                     '✅ Agenda: ' + (importedData.data.agendaActivities ? importedData.data.agendaActivities.length : 0) + ' atividades\n' +
-                    '✅ Reuniões: ' + (importedData.data.meetingsApp.meetings ? importedData.data.meetingsApp.meetings.length : 0) + ' reuniões\n' +
+                    '✅ Reuniões: ' + (importedData.data.meetings ? importedData.data.meetings.length : 0) + ' reuniões\n' +
                     '✅ Reports: ' + (importedData.data.reports ? importedData.data.reports.length : 0) + ' reports\n' +
                     '✅ Wiki: ' + (importedData.data.wiki ? importedData.data.wiki.length : 0) + ' páginas\n\n' +
                     'Deseja continuar?';
@@ -80,7 +80,7 @@ function importData() {
                     localStorage.setItem('agendaActivities', JSON.stringify(importedData.data.agendaActivities));
                 }
                 if (importedData.data.meetings) {
-                    localStorage.setItem('meetings', JSON.stringify(importedData.data.meetings));
+                    localStorage.setItem('meetingsApp.meetings', JSON.stringify(importedData.data.meetings));
                 }
                 if (importedData.data.reports) {
                     localStorage.setItem('reports', JSON.stringify(importedData.data.reports));
@@ -106,4 +106,45 @@ function importData() {
     };
 
     input.click();
+}
+
+// ===================================
+// SISTEMA DE LIMPEZA
+// Remove todos os dados gerenciados pelo app
+// ===================================
+
+function clearData() {
+    const confirmMessage = 
+        '🚨 CUIDADO: AÇÃO IRREVERSÍVEL! 🚨\n\n' +
+        'Isso irá APAGAR TODOS os seus dados salvos no navegador:\n' +
+        '❌ Checklist\n' +
+        '❌ Agenda\n' +
+        '❌ Reuniões\n' +
+        '❌ Reports\n' +
+        '❌ Wiki\n\n' +
+        'Você tem ABSOLUTA CERTEZA de que deseja limpar o banco de dados?\n' +
+        '(Recomendamos fazer um backup antes de continuar).';
+
+    // O confirm() abre a caixa de diálogo com botões "OK" e "Cancelar"
+    if (confirm(confirmMessage)) {
+        try {
+            // Remove as chaves específicas do localStorage
+            localStorage.removeItem('checklist');
+            localStorage.removeItem('agendaActivities');
+            localStorage.removeItem('meetingsApp.meetings');
+            localStorage.removeItem('reports');
+            localStorage.removeItem('wiki');
+
+            alert('✅ Banco de dados limpo com sucesso!\n\nA página será recarregada.');
+
+            // Recarrega a página após 1 segundo para limpar a interface
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
+
+        } catch (error) {
+            alert('Erro ao limpar os dados: ' + error.message);
+            console.error('Erro na limpeza:', error);
+        }
+    }
 }

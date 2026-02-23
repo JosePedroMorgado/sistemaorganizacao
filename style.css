@@ -664,6 +664,14 @@ h1, h2 {
     background-color: #e0a800;
 }
 
+.danger-btn {
+    background-color: #dc3545; /* Vermelho padrão de alerta */
+    color: white;
+}
+.danger-btn:hover {
+    background-color: #c82333; /* Vermelho mais escuro no hover */
+}
+
 /* ===================================
    MODAL DE VISUALIZAÇÃO DE ATIVIDADE
    =================================== */

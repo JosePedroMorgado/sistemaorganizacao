@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
     const closeMenuBtn = document.getElementById('close-menu-btn');
     const mainContent = document.querySelector('.main-content');
-    let overlay = null; // Será criado dinamicamente
+    let overlay = null; 
 
     // --- Elementos do Formulário de Tarefas ---
     const taskForm = document.getElementById('task-form');
@@ -15,17 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Elementos da Lista de Tarefas ---
     const taskList = document.getElementById('task-list');
-    const emptyListMessage = document.getElementById('empty-list-message'); // Corrigido
+    const emptyListMessage = document.getElementById('empty-list-message'); 
 
     // --- Elementos de Filtro e Ações ---
-    const filterAllBtn = document.getElementById('filter-all');
     const filterPendingBtn = document.getElementById('filter-pending');
     const filterCompletedBtn = document.getElementById('filter-completed');
-    const clearCompletedBtn = document.getElementById('clear-completed-btn');
+    const filterNegativeBtn = document.getElementById('filter-negative');
+    const clearFinishedBtn = document.getElementById('clear-finished-btn'); // Atualizado
 
     const LOCAL_STORAGE_KEY = 'checklistTasks';
     let tasks = [];
-    let currentFilter = 'all'; // 'all', 'pending', 'completed'
+    let currentFilter = 'pending'; // Agora o padrão é 'pending'
 
     // --- Funções de Persistência ---
     function saveTasks() {
@@ -34,45 +34,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadTasks() {
         const storedTasks = localStorage.getItem(LOCAL_STORAGE_KEY);
-        tasks = storedTasks ? JSON.parse(storedTasks) : [];
+        let parsedTasks = storedTasks ? JSON.parse(storedTasks) : [];
+        
+        // Migração automática de dados antigos
+        tasks = parsedTasks.map(task => {
+            if (task.status === undefined) {
+                return { ...task, status: task.completed ? 'completed' : 'pending' };
+            }
+            return task;
+        });
     }
 
     // --- Funções do Menu Lateral ---
     function openMenu() {
         sideMenu.classList.add('open');
-        menuToggleBtn.classList.add('menu-open'); // Adiciona a classe para mover o botão
-        if (window.innerWidth > 768) { // Em telas grandes, empurra o conteúdo
+        menuToggleBtn.classList.add('menu-open'); 
+        if (window.innerWidth > 768) { 
             mainContent.style.marginLeft = sideMenu.offsetWidth + 'px';
-        } else { // Em telas pequenas, cria um overlay
+        } else { 
             if (!overlay) {
                 overlay = document.createElement('div');
                 overlay.classList.add('overlay');
                 document.body.appendChild(overlay);
-                overlay.addEventListener('click', closeMenu); // Clicar no overlay fecha o menu
+                overlay.addEventListener('click', closeMenu); 
             }
             overlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Impede scroll do body
+            document.body.style.overflow = 'hidden'; 
         }
     }
 
     function closeMenu() {
         sideMenu.classList.remove('open');
-        menuToggleBtn.classList.remove('menu-open'); // Remove a classe para retornar o botão
-        mainContent.style.marginLeft = '0'; // Volta o conteúdo para a posição original
+        menuToggleBtn.classList.remove('menu-open'); 
+        mainContent.style.marginLeft = '0'; 
         if (overlay) {
             overlay.classList.remove('active');
-            document.body.style.overflow = ''; // Restaura scroll do body
+            document.body.style.overflow = ''; 
         }
     }
 
     // --- Funções de Renderização ---
     function renderTasks() {
-        taskList.innerHTML = ''; // Limpa a lista antes de renderizar
+        taskList.innerHTML = ''; 
 
         const filteredTasks = tasks.filter(task => {
-            if (currentFilter === 'pending') return !task.completed;
-            if (currentFilter === 'completed') return task.completed;
-            return true; // 'all'
+            if (currentFilter === 'pending') return task.status === 'pending';
+            if (currentFilter === 'completed') return task.status === 'completed';
+            if (currentFilter === 'negative') return task.status === 'negative';
+            return false; 
         });
 
         if (filteredTasks.length === 0) {
@@ -82,44 +91,64 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         filteredTasks.forEach(task => {
-            const listItem = document.createElement('li');
+            const card = document.createElement('div');
+            card.classList.add('task-card');
+            
+            if (task.status === 'completed') card.classList.add('completed');
+            if (task.status === 'negative') card.classList.add('negative');
 
-            const taskContent = document.createElement('div');
-            taskContent.classList.add('task-content');
-            taskContent.addEventListener('click', () => toggleTaskCompletion(task.id));
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = task.completed;
-            checkbox.addEventListener('change', (e) => {
-                e.stopPropagation();
-                toggleTaskCompletion(task.id);
-            });
-
-            const taskTextSpan = document.createElement('span');
-            taskTextSpan.classList.add('task-text');
-            taskTextSpan.textContent = task.text;
-            if (task.completed) {
-                taskTextSpan.classList.add('completed');
-            }
-
-            taskContent.appendChild(checkbox);
-            taskContent.appendChild(taskTextSpan);
+            const taskTextElement = document.createElement('p');
+            taskTextElement.classList.add('task-card-text');
+            taskTextElement.textContent = task.text;
 
             const taskActions = document.createElement('div');
-            taskActions.classList.add('task-actions');
+            taskActions.classList.add('task-card-actions');
+
+            if (task.status === 'pending') {
+                const completeBtn = document.createElement('button');
+                completeBtn.classList.add('action-btn', 'complete-btn');
+                completeBtn.title = 'Marcar como Concluída';
+                completeBtn.innerHTML = '<i class="fas fa-check"></i>';
+                completeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    changeTaskStatus(task.id, 'completed');
+                });
+                taskActions.appendChild(completeBtn);
+
+                const negativeBtn = document.createElement('button');
+                negativeBtn.classList.add('action-btn', 'negative-btn');
+                negativeBtn.title = 'Marcar como Não Realizada';
+                negativeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                negativeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    changeTaskStatus(task.id, 'negative');
+                });
+                taskActions.appendChild(negativeBtn);
+            } else {
+                const undoBtn = document.createElement('button');
+                undoBtn.classList.add('action-btn', 'undo-btn');
+                undoBtn.title = 'Voltar para Pendente';
+                undoBtn.innerHTML = '<i class="fas fa-undo"></i>';
+                undoBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    changeTaskStatus(task.id, 'pending');
+                });
+                taskActions.appendChild(undoBtn);
+            }
 
             const editButton = document.createElement('button');
-            editButton.textContent = 'Editar';
-            editButton.classList.add('edit-btn');
+            editButton.classList.add('action-btn', 'edit-btn');
+            editButton.title = 'Editar Tarefa';
+            editButton.innerHTML = '<i class="fas fa-pen"></i>';
             editButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 editTask(task.id);
             });
 
             const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Excluir';
-            deleteButton.classList.add('delete-btn');
+            deleteButton.classList.add('action-btn', 'delete-btn');
+            deleteButton.title = 'Excluir Tarefa';
+            deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
             deleteButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 deleteTask(task.id);
@@ -128,16 +157,17 @@ document.addEventListener('DOMContentLoaded', () => {
             taskActions.appendChild(editButton);
             taskActions.appendChild(deleteButton);
 
-            listItem.appendChild(taskContent);
-            listItem.appendChild(taskActions);
-            taskList.appendChild(listItem);
+            card.appendChild(taskTextElement); 
+            card.appendChild(taskActions);     
+
+            taskList.appendChild(card);
         });
     }
 
     // --- Funções de Ação ---
     function addTask(text) {
         const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
-        tasks.push({ id: newId, text, completed: false });
+        tasks.push({ id: newId, text, status: 'pending' });
         saveTasks();
         renderTasks();
     }
@@ -170,18 +200,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function toggleTaskCompletion(id) {
+    function changeTaskStatus(id, newStatus) {
         const taskIndex = tasks.findIndex(task => task.id === id);
         if (taskIndex !== -1) {
-            tasks[taskIndex].completed = !tasks[taskIndex].completed;
+            tasks[taskIndex].status = newStatus;
             saveTasks();
             renderTasks();
         }
     }
 
-    function clearCompletedTasks() {
-        if (confirm('Tem certeza que deseja remover todas as tarefas concluídas?')) {
-            tasks = tasks.filter(task => !task.completed);
+    // Função de limpeza atualizada para remover Concluídas E Não Realizadas
+    function clearFinishedTasks() {
+        if (confirm('Tem certeza que deseja remover TODAS as tarefas finalizadas (Concluídas e Não Realizadas)?')) {
+            // Mantém no array apenas o que estiver pendente
+            tasks = tasks.filter(task => task.status === 'pending');
             saveTasks();
             renderTasks();
         }
@@ -196,9 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setFilter(filter) {
         currentFilter = filter;
-        filterAllBtn.classList.remove('active');
         filterPendingBtn.classList.remove('active');
         filterCompletedBtn.classList.remove('active');
+        filterNegativeBtn.classList.remove('active');
+        
         document.getElementById(`filter-${filter}`).classList.add('active');
         renderTasks();
     }
@@ -220,28 +253,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cancelEditBtn.addEventListener('click', resetForm);
 
-    filterAllBtn.addEventListener('click', () => setFilter('all'));
     filterPendingBtn.addEventListener('click', () => setFilter('pending'));
     filterCompletedBtn.addEventListener('click', () => setFilter('completed'));
-    clearCompletedBtn.addEventListener('click', clearCompletedTasks);
+    filterNegativeBtn.addEventListener('click', () => setFilter('negative'));
+    clearFinishedBtn.addEventListener('click', clearFinishedTasks); // Listener atualizado
 
-    // Event listeners para o menu lateral
     menuToggleBtn.addEventListener('click', openMenu);
     closeMenuBtn.addEventListener('click', closeMenu);
 
-    // Fecha o menu se a tela for redimensionada para desktop enquanto o menu estiver aberto
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && sideMenu.classList.contains('open')) {
             mainContent.style.marginLeft = sideMenu.offsetWidth + 'px';
-            // Garante que o botão se mova para a posição correta em desktop
             menuToggleBtn.classList.add('menu-open');
             if (overlay) {
                 overlay.classList.remove('active');
                 document.body.style.overflow = '';
             }
         } else if (window.innerWidth <= 768 && sideMenu.classList.contains('open')) {
-            mainContent.style.marginLeft = '0'; // Garante que o conteúdo não seja empurrado em mobile
-            // Garante que o botão volte para a posição original em mobile
+            mainContent.style.marginLeft = '0'; 
             menuToggleBtn.classList.remove('menu-open');
         }
     });
